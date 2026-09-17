@@ -61,4 +61,12 @@ Gotchas already paid for there: `trailingSlash: true` means posting to `/api/cha
 
 ### Building in parallel
 
-`docs/parallel-slices.md` records how work is split between agents: vertical slices cut along the spec's capability boundaries, each agent in its own git worktree, with the scaffold, schema, sessions, seeding and the shared UI and schema packages landed on `main` as phase 0 first. It also names the three candidate slices and the traps the advisor build hit, including two worktrees competing for one dev port.
+`docs/parallel-slices.md` records how work is split between agents: vertical slices cut along the spec's capability boundaries, each agent in its own git worktree, with the foundations landed on `main` as phase 0 first. It also names the traps the advisor build hit, including two worktrees competing for one dev port.
+
+The change's task list is now ordered that way. Phase 0 is three groups on `main`: the monorepo and toolchain, the shared contracts (Zod schemas, the `packages/ui` components and answer renderer, and a fake answer route that streams canned replies), and the database with RLS, session middleware and a Supabase branch per slice. Then three slices run in parallel:
+
+- Slice A owns `apps/api`, the demo corpora and the eval: ingestion, seeding, retrieval, answers, citations and the caps.
+- Slice B owns `apps/dashboard`.
+- Slice C owns `apps/widget` and `apps/landing`.
+
+B and C build against the phase 0 fake route, so neither waits on A. Integration merges A, then B, then C on `main`, deletes the fake, and checks that the preview chat and the embedded widget answer identically. The rule that makes this work: a slice never writes a file another slice owns, and anything two slices need is phase 0 work.
