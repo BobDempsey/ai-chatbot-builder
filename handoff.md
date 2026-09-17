@@ -58,3 +58,7 @@ Deliberately not copied: its `isSameOrigin` check, which refuses any request who
 Toolchain to match: pnpm 10.15.1, Node 22 in CI, Biome rather than ESLint and Prettier, Vitest, LF newlines enforced by `.gitattributes`.
 
 Gotchas already paid for there: `trailingSlash: true` means posting to `/api/chat/` or taking a 308; files a function reads at runtime must be listed under `includeFiles` in `vercel.json` and are read from `process.cwd()`; the shadcn CLI writes React 19 components where `ref` is a plain prop, so on React 18 anything needing a ref must be wrapped in `forwardRef` or focus management breaks; `react-markdown` needs `remark-gfm` for tables and `skipHtml` for safety, and a table belongs in a focusable scrollable region or axe fails it; firewall rules live in the Vercel dashboard, not in the repo; and moving the repo folder needs `CI=1 pnpm install --frozen-lockfile`.
+
+### Building in parallel
+
+`docs/parallel-slices.md` records how work is split between agents: vertical slices cut along the spec's capability boundaries, each agent in its own git worktree, with the scaffold, schema, sessions, seeding and the shared UI and schema packages landed on `main` as phase 0 first. It also names the three candidate slices and the traps the advisor build hit, including two worktrees competing for one dev port.
