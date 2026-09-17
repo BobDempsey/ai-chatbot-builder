@@ -1,3 +1,65 @@
+/*
+ * The page's own stylesheet. It does not scan the widget, whose classes are
+ * only ever used inside a shadow root this sheet cannot reach; the chat bundle
+ * carries its own copy for that.
+ */
 @import '@acb/ui/styles.css';
 @source '../../../packages/ui/src';
 @source './';
+
+/*
+ * The shared sheet has preflight off, for the widget's sake: it mounts on pages
+ * this project does not own, where a reset is not ours to apply. This page owns
+ * its whole document, so it restates the parts the shared components were
+ * written against. Without them a border draws nothing, a button keeps the
+ * browser's grey face and 13px font, and every heading and paragraph carries a
+ * margin the spacing utilities then double.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--color-line);
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+}
