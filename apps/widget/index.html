@@ -3,10 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Chatbot Builder</title>
+    <title>Widget on a hostile page</title>
+    <!--
+      A deliberately rude host page, so `pnpm dev:widget` shows the widget under
+      the conditions it actually ships into: a universal reset, a universal
+      font, a universal color, and rules aimed at the tags the widget uses. If
+      the chat still looks right here, a shadow root is doing its job.
+    -->
+    <style>
+      * {
+        box-sizing: content-box !important;
+        font-family: 'Comic Sans MS', cursive !important;
+        color: #b91c1c !important;
+        line-height: 3 !important;
+        letter-spacing: 0.2em !important;
+        text-transform: uppercase !important;
+      }
+      body {
+        margin: 0;
+        padding: 2rem;
+        background: repeating-linear-gradient(45deg, #fef3c7, #fef3c7 20px, #fde68a 20px, #fde68a 40px);
+      }
+      button,
+      input,
+      textarea,
+      section,
+      div,
+      p {
+        border: 3px dashed #7c3aed !important;
+        background: #ecfccb !important;
+        padding: 12px !important;
+      }
+      h1 {
+        font-size: 4rem !important;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <h1>Somebody else's website</h1>
+    <p>
+      Every rule on this page is aimed at the widget. The bubble in the corner should ignore all of it, and nothing above should
+      change when the chat opens.
+    </p>
+    <button type="button">A host page button, for comparison</button>
+    <script type="module" src="/src/embed.ts" data-acb-bot="00000000-0000-4000-8000-000000000041"></script>
   </body>
 </html>

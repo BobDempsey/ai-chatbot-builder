@@ -1,3 +1,99 @@
 @import '@acb/ui/styles.css';
 @source '../../../packages/ui/src';
 @source './';
+
+/*
+ * The shared sheet turns preflight off, which is right: the widget lands on
+ * pages this project does not own, and a reset would be a change to somebody
+ * else's document. The shared components still assume the parts of preflight
+ * they were written against, so those parts are restated here.
+ *
+ * Without them a border draws nothing, a button keeps the browser's grey face
+ * and 13px font, headings and paragraphs carry margins the spacing utilities
+ * then double, and the citation list grows numbers beside the numbers the
+ * answer already prints.
+ *
+ * Every rule lives inside the shadow root, where `*` reaches only the widget's
+ * own nodes, so the host page still sees nothing.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after,
+  ::backdrop {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--color-line);
+    /*
+     * Tailwind writes `border-style: var(--tw-border-style)` and registers the
+     * initial value with `@property`. A custom property registration only
+     * counts from a document stylesheet, so in a shadow root the browser
+     * ignores it, `var()` resolves to nothing, and every border and outline
+     * silently disappears. Tailwind ships the same list as its own fallback
+     * for browsers without `@property`; this restates it for a shadow tree.
+     */
+    --tw-border-style: solid;
+    --tw-outline-style: solid;
+    --tw-space-y-reverse: 0;
+    --tw-shadow: 0 0 #0000;
+    --tw-shadow-alpha: 100%;
+    --tw-inset-shadow: 0 0 #0000;
+    --tw-inset-shadow-alpha: 100%;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-inset-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/*
+ * The shared sheet puts its dark tokens on `:root`, and a shadow tree has no
+ * `:root`, so inside the widget they never match and the panel stays light.
+ * Restating them on `:host` is the smallest fix that does not change a file
+ * phase 0 froze. Media queries are evaluated against the document, so the host
+ * page's `prefers-color-scheme` is what decides.
+ */
+@media (prefers-color-scheme: dark) {
+  :host {
+    --color-surface: #16181d;
+    --color-surface-muted: #1f222a;
+    --color-ink: #f3f4f6;
+    --color-ink-muted: #a3a9b6;
+    --color-line: #2c3038;
+  }
+}
