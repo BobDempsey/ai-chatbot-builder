@@ -162,7 +162,7 @@ function route(state: TestServer, method: string, path: string, body: unknown, i
     return json(accept(state, upload.url, 'url', upload.url));
   }
 
-  if (method === 'POST' && path === '/api/documents/file') {
+  if (method === 'POST' && path === '/api/documents/pdf') {
     const file = init?.body instanceof FormData ? init.body.get('file') : null;
     const name = file instanceof File ? file.name : 'upload.pdf';
     return json(accept(state, name, 'pdf', name));

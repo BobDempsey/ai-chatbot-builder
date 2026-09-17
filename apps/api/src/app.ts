@@ -11,6 +11,7 @@
  * ai-frontend-advisor's same-origin check is deliberately not copied wholesale:
  * its chat only ever runs on its own site, and this one does not.
  */
+import { handoffRequestSchema } from '@acb/schemas';
 import { Hono } from 'hono';
 import { handleChat, type ChatDeps } from './routes/chat';
 import type { ApiDeps } from './routes/deps';
@@ -71,6 +72,38 @@ export function createApi(deps: ApiDeps, sessions: SessionStore) {
     const found = await deps.store.getBotByPublicId(publicId);
     if (!found) return withCors(Response.json({ error: 'That chatbot could not be found.' }, { status: 404 }));
     return withCors(await handleChat(chatDeps, { sessionId: found.sessionId, bot: found.bot, surface: 'widget', rawBody: raw }));
+  });
+
+  // What a public bot id grants besides asking: the bot's appearance, so the
+  // widget can theme itself before its first question, and the email handoff
+  // that follows a decline. Both are cross-origin for the same reason the chat
+  // is, and both return only what the id is allowed to reach: no session id, no
+  // documents, no logs.
+  api.options('/api/bot', (c) => c.body(null, 204, { ...CORS_HEADERS, 'access-control-allow-methods': 'GET, OPTIONS' }));
+  api.options('/api/handoff', (c) => c.body(null, 204, CORS_HEADERS));
+
+  api.get('/api/bot', async (c, next) => {
+    const publicId = c.req.query('botId');
+    if (!publicId) return next();
+    const found = await deps.store.getBotByPublicId(publicId);
+    if (!found) return withCors(Response.json({ error: 'That chatbot could not be found.' }, { status: 404 }));
+    const { name, accentColor, greeting, tone, publicId: id } = found.bot;
+    return withCors(Response.json({ publicId: id, name, accentColor, greeting, tone }));
+  });
+
+  api.post('/api/handoff', async (c, next) => {
+    const raw = await c.req.text();
+    c.set('rawBody', raw);
+    const publicId = peekBotId(raw);
+    if (!publicId) return next();
+
+    const found = await deps.store.getBotByPublicId(publicId);
+    if (!found) return withCors(Response.json({ error: 'That chatbot could not be found.' }, { status: 404 }));
+    const parsed = handoffRequestSchema.safeParse(JSON.parse(raw));
+    if (!parsed.success) return withCors(Response.json({ error: 'That email address does not look right.' }, { status: 400 }));
+    const attached = await deps.store.attachHandoffEmail(found.sessionId, parsed.data.questionId, parsed.data.email);
+    if (!attached) return withCors(Response.json({ error: 'That question could not be found.' }, { status: 404 }));
+    return withCors(Response.json({ ok: true }));
   });
 
   const owner = new Hono();

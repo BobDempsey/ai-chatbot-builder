@@ -17,6 +17,7 @@
  * `data-acb-api` overrides where requests go; without it they go to the origin
  * that served this script.
  */
+import { BOT_ID_ATTRIBUTE } from '@acb/schemas/embed';
 import { adoptStyles } from './adopt-styles';
 import { ASK_EVENT, askWidget, questionOf } from './ask-event';
 import { BUBBLE_CSS, createBubbleButton } from './bubble';
@@ -126,7 +127,7 @@ export function createWidget(options: WidgetOptions): WidgetHandle {
  * such tag and mounts nothing, so that page can call `createWidget` itself.
  */
 function mountFromScriptTag(): void {
-  const tag = document.querySelector<HTMLScriptElement>('script[data-acb-bot]');
+  const tag = document.querySelector<HTMLScriptElement>(`script[${BOT_ID_ATTRIBUTE}]`);
   const botId = tag?.dataset.acbBot;
   if (!tag || !botId) return;
   const apiBase = tag.dataset.acbApi ?? '';

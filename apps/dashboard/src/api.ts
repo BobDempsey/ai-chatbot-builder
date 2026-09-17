@@ -109,7 +109,7 @@ export function uploadUrl(upload: UrlUpload): Promise<Doc> {
 export function uploadFile(file: File): Promise<Doc> {
   const form = new FormData();
   form.append('file', file);
-  return json(documentSchema, '/api/documents/file', { method: 'POST', body: form });
+  return json(documentSchema, '/api/documents/pdf', { method: 'POST', body: form });
 }
 
 /** Swapping corpora replaces the workspace's seeded documents, so the list comes back whole. */

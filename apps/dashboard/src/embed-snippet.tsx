@@ -1,29 +1,20 @@
 /**
  * The one line that puts the bot on someone else's site.
  *
- * {@link embedSnippet} is the single place the tag's shape is written. The
- * widget reads its bot from `data-acb-bot` on its own `<script>` element, so
- * that attribute name is a contract between this slice and the widget slice,
- * and the test below pins it. Nothing else is required of the host page: no
- * stylesheet, no container element, no build step.
+ * The tag's shape comes from `@acb/schemas`, because the widget's entry script
+ * has to read what this generates and neither app can see the other. Nothing
+ * else is required of the host page: no stylesheet, no container element, no
+ * build step.
  *
  * The public id is carried rather than the session cookie, because a cookie is
  * not sent from a third-party page. That id grants asking questions and nothing
  * else.
  */
+import { embedSnippet } from '@acb/schemas';
 import { Button, Card } from '@acb/ui';
 import { useState } from 'react';
 
-/** The attribute the widget's entry script reads its bot id from. */
-export const BOT_ID_ATTRIBUTE = 'data-acb-bot';
-
-/** The file the tag loads: the small entry script, not the chat bundle. */
-export const WIDGET_SCRIPT_PATH = '/widget.js';
-
-export function embedSnippet(publicId: string, origin: string): string {
-  const source = new URL(WIDGET_SCRIPT_PATH, origin).toString();
-  return `<script src="${source}" ${BOT_ID_ATTRIBUTE}="${publicId}" async></script>`;
-}
+export { BOT_ID_ATTRIBUTE, EMBED_SCRIPT_PATH, embedSnippet } from '@acb/schemas';
 
 export interface EmbedSnippetProps {
   publicId: string;

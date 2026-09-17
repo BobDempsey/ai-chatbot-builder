@@ -11,7 +11,7 @@ import { DEFAULT_BOT_SETTINGS } from '@acb/schemas';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { App } from './app';
-import { BOT_ID_ATTRIBUTE, embedSnippet, WIDGET_SCRIPT_PATH } from './embed-snippet';
+import { BOT_ID_ATTRIBUTE, EMBED_SCRIPT_PATH, embedSnippet } from './embed-snippet';
 import { installTestServer, type TestServer } from './test-server';
 
 let server: TestServer;
@@ -198,10 +198,10 @@ describe('5.7 embed snippet', () => {
   it('carries the public bot id in the attribute the widget reads', () => {
     const snippet = embedSnippet('00000000-0000-4000-8000-000000000041', 'https://bots.example.com');
     expect(snippet).toBe(
-      '<script src="https://bots.example.com/widget.js" data-acb-bot="00000000-0000-4000-8000-000000000041" async></script>',
+      '<script type="module" src="https://bots.example.com/embed.js" data-acb-bot="00000000-0000-4000-8000-000000000041"></script>',
     );
     expect(BOT_ID_ATTRIBUTE).toBe('data-acb-bot');
-    expect(WIDGET_SCRIPT_PATH).toBe('/widget.js');
+    expect(EMBED_SCRIPT_PATH).toBe('/embed.js');
   });
 
   it('copies exactly the line it shows', async () => {

@@ -1,3 +1,13 @@
 @import '@acb/ui/styles.css';
+@import '@acb/ui/base.css';
 @source '../../../packages/ui/src';
 @source './';
+
+/* The dashboard owns its document, so it sets the page defaults too. */
+@layer base {
+  body {
+    margin: 0;
+    background: var(--color-surface);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+}

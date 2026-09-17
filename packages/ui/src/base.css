@@ -1,0 +1,81 @@
+/*
+ * The parts of Tailwind's preflight the shared components were written
+ * against, restated as an opt-in layer.
+ *
+ * `styles.css` turns preflight off, because the widget mounts on pages this
+ * project does not own and a reset there would be a change to somebody else's
+ * document. The components still assume it: without these rules a border draws
+ * nothing, a button keeps the browser's grey face and 13px font, headings and
+ * paragraphs carry margins the spacing utilities then double, and the citation
+ * list grows numbers beside the ones the answer already prints.
+ *
+ * So each surface opts in where it is safe. The dashboard and the landing page
+ * own their whole document. The widget applies it inside its shadow root, where
+ * `*` reaches only the widget's own nodes and the host page still sees nothing.
+ *
+ * Import it after `@acb/ui/styles.css`.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after,
+  ::backdrop {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--color-line);
+    /*
+     * Tailwind writes `border-style: var(--tw-border-style)` and registers the
+     * initial value with `@property`. A registration only counts from a
+     * document stylesheet, so inside a shadow root the browser ignores it,
+     * `var()` resolves to nothing, and every border and outline silently
+     * disappears. Tailwind ships this same list as its fallback for browsers
+     * without `@property`; this restates it for a shadow tree.
+     */
+    --tw-border-style: solid;
+    --tw-outline-style: solid;
+    --tw-space-y-reverse: 0;
+    --tw-shadow: 0 0 #0000;
+    --tw-shadow-alpha: 100%;
+    --tw-inset-shadow: 0 0 #0000;
+    --tw-inset-shadow-alpha: 100%;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-inset-ring-shadow: 0 0 #0000;
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  ol,
+  ul,
+  menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}

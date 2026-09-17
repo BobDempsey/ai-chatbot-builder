@@ -52,6 +52,8 @@ export type ChatEvent = z.infer<typeof chatEventSchema>;
 export const handoffRequestSchema = z.object({
   questionId: z.uuid(),
   email: z.email(),
+  /** Sent by the widget, which has no cookie to say which bot it belongs to. */
+  botId: z.uuid().optional(),
 });
 export type HandoffRequest = z.infer<typeof handoffRequestSchema>;
 

@@ -1,9 +1,9 @@
 /**
- * `pnpm dev:api:real`: the real routes on slice A's port, over an in-memory
- * workspace.
+ * `pnpm dev:api`: the real routes over an in-memory workspace, on the port the
+ * dashboard, widget and landing page all proxy `/api` to.
  *
- * It is how the dashboard and the widget are pointed at the actual answer path
- * before integration: `ACB_API=http://localhost:5190 pnpm dev:dashboard`. With
+ * It replaced the phase 0 fake at integration, which is why it holds 5180
+ * rather than the 5190 slice A built it on. With
  * no `OPENAI_API_KEY` set it runs the fake embedding and answering clients, so
  * the whole pipeline works with nothing configured; with a key set it calls the
  * real providers, which is the only difference between this and a deployment.
@@ -45,7 +45,7 @@ const api = createApi(
   sessions,
 );
 
-const port = Number(process.env.PORT ?? 5190);
+const port = Number(process.env.PORT ?? 5180);
 
 const loaded = await loadTemplates(store, embeddings);
 serve({ fetch: api.fetch, port }, (info) => {

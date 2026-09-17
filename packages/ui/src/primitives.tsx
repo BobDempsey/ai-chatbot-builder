@@ -117,12 +117,29 @@ export interface DialogProps {
   trigger?: ReactNode;
   /** Where the portal renders. The widget passes its shadow root. */
   container?: HTMLElement | null;
+  /**
+   * Modal by default. A modal dialog locks scrolling by writing styles onto
+   * `document.body` and inserting a rule into `document.head`, which is exactly
+   * what a widget embedded on somebody else's page must never do. Pass false
+   * there, and keep focus inside the panel by other means.
+   */
+  modal?: boolean;
   className?: string;
 }
 
-export function Dialog({ open, onOpenChange, title, description, children, trigger, container, className }: DialogProps) {
+export function Dialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  children,
+  trigger,
+  container,
+  modal = true,
+  className,
+}: DialogProps) {
   return (
-    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+    <RadixDialog.Root open={open} onOpenChange={onOpenChange} modal={modal}>
       {trigger ? <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger> : null}
       <RadixDialog.Portal container={container ?? undefined}>
         <RadixDialog.Overlay className="acb:fixed acb:inset-0 acb:bg-black/40" />

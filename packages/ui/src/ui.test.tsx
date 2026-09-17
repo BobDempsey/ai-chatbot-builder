@@ -67,6 +67,33 @@ describe('React 19 refs and focus', () => {
     fireEvent.keyDown(dialog, { key: 'Escape' });
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
+
+  it('touches neither document.body nor document.head when it is not modal', async () => {
+    function Probe() {
+      const [open, setOpen] = useState(false);
+      return (
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          modal={false}
+          title="Chat"
+          description="Ask the bot a question."
+          trigger={<Button>Open chat</Button>}
+        >
+          <Input aria-label="Message" />
+        </Dialog>
+      );
+    }
+    const headBefore = document.head.innerHTML;
+    render(<Probe />);
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    await screen.findByRole('dialog');
+
+    // The widget mounts on pages this project does not own, so a scroll lock
+    // written onto the host's body is a change to somebody else's document.
+    expect(document.body.getAttribute('style')).toBeFalsy();
+    expect(document.head.innerHTML).toBe(headBefore);
+  });
 });
 
 describe('answer rendering', () => {

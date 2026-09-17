@@ -449,6 +449,70 @@ describe('two request classes', () => {
     expect(upload.status).toBe(403);
     expect((await world.store.getBot(sessionId))?.name).toBe(bot?.name);
   });
+
+  it('gives a widget the bot appearance it needs, and nothing more', async () => {
+    const sessionId = await sessionOf(visitor);
+    const bot = await world.store.getBot(sessionId);
+    const response = await world.api.request(`/api/bot?botId=${bot?.publicId}`, {
+      headers: { origin: 'https://someone-elses-site.example' },
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('access-control-allow-origin')).toBe('*');
+
+    const body = (await response.json()) as Record<string, unknown>;
+    expect(body).toMatchObject({ name: bot?.name, accentColor: bot?.accentColor, greeting: bot?.greeting });
+    // The internal id and the session behind it stay on the server.
+    expect(body.id).toBeUndefined();
+    expect(body.sessionId).toBeUndefined();
+  });
+
+  it('refuses an unknown bot id without calling anything paid', async () => {
+    const unknown = '00000000-0000-4000-8000-0000000009ff';
+    const bot = await world.api.request(`/api/bot?botId=${unknown}`, { headers: { origin: 'https://elsewhere.example' } });
+    expect(bot.status).toBe(404);
+
+    // Seeding the corpus already embedded its chunks, so what matters is that
+    // the refused request adds nothing to either count.
+    const embeddingsBefore = world.embeddings.calls;
+    const answersBefore = world.model.calls;
+
+    const chat = await world.api.request('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'https://elsewhere.example' },
+      body: JSON.stringify({ message: 'Anything at all', botId: unknown }),
+    });
+    expect(chat.status).toBe(404);
+    expect(world.model.calls).toBe(answersBefore);
+    expect(world.embeddings.calls).toBe(embeddingsBefore);
+  });
+
+  it('takes a handoff email from a widget on another origin', async () => {
+    const sessionId = await sessionOf(visitor);
+    const bot = await world.store.getBot(sessionId);
+    const declined = await world.api.request('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'https://someone-elses-site.example' },
+      body: JSON.stringify({ message: 'Do you support SAML single sign-on?', botId: bot?.publicId }),
+    });
+    const decline = parseEvents(await declined.text()).find((event) => event.type === 'declined');
+    if (decline?.type !== 'declined') throw new Error('expected a decline');
+
+    const handoff = await world.api.request('/api/handoff', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'https://someone-elses-site.example' },
+      body: JSON.stringify({ questionId: decline.questionId, email: 'ada@example.com', botId: bot?.publicId }),
+    });
+    expect(handoff.status).toBe(200);
+    expect(handoff.headers.get('access-control-allow-origin')).toBe('*');
+    expect((await world.store.listUnanswered(sessionId)).some((q) => q.email === 'ada@example.com')).toBe(true);
+
+    const malformed = await world.api.request('/api/handoff', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', origin: 'https://someone-elses-site.example' },
+      body: JSON.stringify({ questionId: decline.questionId, email: 'not-an-email', botId: bot?.publicId }),
+    });
+    expect(malformed.status).toBe(400);
+  });
 });
 
 describe('the record', () => {

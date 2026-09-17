@@ -7,6 +7,7 @@
  * first, because more than one slice reads every shape below.
  */
 export * from './chat';
+export * from './embed';
 export * from './documents';
 export * from './settings';
 export * from './feedback';

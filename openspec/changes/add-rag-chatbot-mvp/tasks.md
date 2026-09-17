@@ -68,7 +68,7 @@ Owns `apps/dashboard`. Builds against the phase 0 fake route until slice A merge
 - [x] 5.4 Build the conversation log with citations, and verify an exchange opens and shows its sources
 - [x] 5.5 Build the ratings summary and thumbs controls, and verify a rating persists and appears in the summary
 - [x] 5.6 Build the unanswered-question list, and verify declined questions land there with their captured emails
-- [ ] 5.7 Show the copyable one-line script tag carrying the bot id, and verify the copied text matches what the widget slice expects
+- [x] 5.7 Show the copyable one-line script tag carrying the bot id, and verify the copied text matches what the widget slice expects
 - [x] 5.8 Run an accessibility check over every dashboard screen, and verify axe reports no violations at 1440 and 375
 
 ## 6. Slice C: widget and landing page
@@ -78,7 +78,7 @@ Owns `apps/widget` and `apps/landing`. Builds against the phase 0 fake route unt
 - [x] 6.1 Build the widget as a standalone bundle that mounts into a shadow root, and verify it renders on a test page with hostile global styles applied
 - [x] 6.2 Verify the host page is unchanged: no global styles introduced and no host element restyled
 - [x] 6.3 Split the embed into a tiny entry script plus a lazily imported chat bundle that downloads on first hover, focus or click, and verify a page nobody interacts with never requests the chat bundle and a failed download leaves the bubble retryable
-- [ ] 6.4 Implement the widget chat against the public bot id using the shared answer renderer, streaming with citations and the human handoff, and verify its answers match the preview chat for the same question
+- [x] 6.4 Implement the widget chat against the public bot id using the shared answer renderer, streaming with citations and the human handoff, and verify its answers match the preview chat for the same question
 - [x] 6.5 Keep the widget conversation in `sessionStorage` with every access guarded, and verify it survives a reload and degrades to memory when storage throws
 - [x] 6.6 Show the remaining question count once part of the allowance is used, counted client-side over the same window and marked spent on a 429, and verify sending is disabled at zero
 - [x] 6.7 Run an automated accessibility check on the open widget with an answer, citations and a table on screen, and verify keyboard open, focus trap, Escape close and focus return
@@ -87,10 +87,10 @@ Owns `apps/widget` and `apps/landing`. Builds against the phase 0 fake route unt
 
 ## 7. Integration (back on `main`, one slice merged at a time)
 
-- [ ] 7.1 Merge slice A, then B, then C, keeping both sides of any shared check file rather than picking one, and verify the full suite passes after each merge
-- [ ] 7.2 Point the dashboard and widget at the real answer route and delete the phase 0 fake, and verify no front end still imports it
-- [ ] 7.3 Verify the preview chat and the embedded widget return the same answer and citations for the same question against the same bot
-- [ ] 7.4 Paste the generated script tag into a blank page and verify it produces a working chat end to end
+- [x] 7.1 Merge slice A, then B, then C, keeping both sides of any shared check file rather than picking one, and verify the full suite passes after each merge
+- [x] 7.2 Point the dashboard and widget at the real answer route and delete the phase 0 fake, and verify no front end still imports it
+- [x] 7.3 Verify the preview chat and the embedded widget return the same answer and citations for the same question against the same bot
+- [x] 7.4 Paste the generated script tag into a blank page and verify it produces a working chat end to end
 
 ## 8. Limits and cleanup (on `main`)
 
