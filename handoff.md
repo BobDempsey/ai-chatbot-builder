@@ -70,3 +70,13 @@ The change's task list is now ordered that way. Phase 0 is three groups on `main
 - Slice C owns `apps/widget` and `apps/landing`.
 
 B and C build against the phase 0 fake route, so neither waits on A. Integration merges A, then B, then C on `main`, deletes the fake, and checks that the preview chat and the embedded widget answer identically. The rule that makes this work: a slice never writes a file another slice owns, and anything two slices need is phase 0 work.
+
+### Supabase project
+
+`ai-chatbot-builder`, ref `qyxkspdsgllklsibgyvb`, us-east-2, in BobDempsey's org. Created 2026-09-17 at no monthly cost. The free tier allows two active projects and both slots were full, so `forged in filament` was paused to make room; it restores from the dashboard whenever it is wanted back.
+
+Five migrations are applied and kept in `supabase/migrations/`, so the schema is reproducible from the repo rather than only from the dashboard. They create pgvector, the eight session-keyed tables, row-level security, the HNSW index and `match_chunks`, and pin the search path on the two policy helpers after the Supabase linter flagged them.
+
+Isolation was checked against real rows rather than assumed: under the `anon` role, session A saw its own two documents and none of session B's, `match_chunks` returned only A's ready chunks in distance order and skipped a document still indexing, a query with no `request.acb_session` claim saw nothing at all, and an expired session became unreachable before any sweep ran. Probe rows were deleted afterwards. The security advisor reports no findings.
+
+Branching costs $0.01344 an hour per branch, so per-slice database branches are not free.

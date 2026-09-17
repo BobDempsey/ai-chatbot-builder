@@ -22,13 +22,13 @@ Ordered as `docs/parallel-slices.md` describes: phase 0 lands on `main` first, t
 
 ## 3. Phase 0: database, sessions and workspaces (on `main`)
 
-- [ ] 3.1 Create the Supabase project and enable pgvector, and verify `select * from pg_extension` lists `vector`
-- [ ] 3.2 Write the first migration: `sessions`, `bots`, `documents`, `chunks` with a vector column, `conversations`, `messages`, `ratings`, `unanswered_questions`, each carrying `session_id`, and verify the migration applies to a clean database
-- [ ] 3.3 Add row-level security policies keyed on the session claim for every table, and verify a query made under session A returns nothing belonging to session B
-- [ ] 3.4 Add the vector index and a retrieval query function, and verify a seeded query returns chunks ordered by distance
-- [ ] 3.5 Implement session minting in the Hono API with an httpOnly, Secure, SameSite=Lax cookie and a 24-hour expiry, and verify a first request sets the cookie and a second reuses it
-- [ ] 3.6 Add middleware that resolves the session and sets the database claim on every request, and verify a request with no cookie mints one and a request with an expired cookie starts fresh
-- [ ] 3.7 Add an integration test proving cross-session access returns 404 for documents, bots, conversations and ratings
+- [x] 3.1 Create the Supabase project and enable pgvector, and verify `select * from pg_extension` lists `vector`
+- [x] 3.2 Write the first migration: `sessions`, `bots`, `documents`, `chunks` with a vector column, `conversations`, `messages`, `ratings`, `unanswered_questions`, each carrying `session_id`, and verify the migration applies to a clean database
+- [x] 3.3 Add row-level security policies keyed on the session claim for every table, and verify a query made under session A returns nothing belonging to session B
+- [x] 3.4 Add the vector index and a retrieval query function, and verify a seeded query returns chunks ordered by distance
+- [x] 3.5 Implement session minting in the Hono API with an httpOnly, Secure, SameSite=Lax cookie and a 24-hour expiry, and verify a first request sets the cookie and a second reuses it
+- [x] 3.6 Add middleware that resolves the session and sets the database claim on every request, and verify a request with no cookie mints one and a request with an expired cookie starts fresh
+- [x] 3.7 Add an integration test proving cross-session access returns 404 for documents, bots, conversations and ratings
 - [ ] 3.8 Give each slice its own Supabase branch or schema, and verify two slices can migrate and seed without touching each other's rows
 
 ## 4. Slice A: ingestion, retrieval and answering
