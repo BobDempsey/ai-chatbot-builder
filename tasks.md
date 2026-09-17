@@ -1,6 +1,6 @@
 # Remaining tasks
 
-- [ ] Initialize the git repo and run `openspec init`
+- [x] Initialize the git repo and run `openspec init`
 - [ ] Write the spec as an OpenSpec change proposal
 - [ ] Scaffold the pnpm monorepo: Hono api, dashboard, widget and shared UI
 - [ ] Set up Tailwind and shadcn/ui with a prefixed, shadow-root-safe config
