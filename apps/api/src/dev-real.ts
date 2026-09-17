@@ -25,11 +25,17 @@ const model = apiKey ? createOpenAiAnswerModel({ apiKey }) : createFakeAnswerMod
 const store = new MemoryWorkspaceStore();
 const sessions = new MemorySessionStore(store);
 
+// The fake embedding client is lexical rather than semantic, so its distances
+// sit higher than the real model's and the production floor would decline
+// everything. With a key set, the production floor applies.
+const retrieval = apiKey ? {} : { floor: 0.78 };
+
 const api = createApi(
   {
     store,
     embeddings,
     model,
+    retrieval,
     extractPdf: extractPdfText,
     fetchUrl: fetchUrlText,
     schedule: (work) => {
