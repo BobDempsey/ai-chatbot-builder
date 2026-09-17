@@ -1,0 +1,17 @@
+{
+  "label": "Marrowbone Labs employee handbook",
+  "answerable": [
+    { "question": "How many days of paid leave do I get?", "expect": "28 days of paid leave" },
+    { "question": "How many leave days can I carry over?", "expect": "5 unused days carry into the next year" },
+    { "question": "What is the hotel cap in London?", "expect": "220 dollars a night" },
+    { "question": "How long can I work from another country?", "expect": "60 days a year" },
+    { "question": "What are the core hours?", "expect": "11:00 to 15:00 UK time" },
+    { "question": "How much is the equipment budget when I join?", "expect": "1,500 dollar equipment budget" }
+  ],
+  "decline": [
+    "What is the bonus scheme?",
+    "How many shares do new joiners get?",
+    "Which pension provider do you use?",
+    "How do I reset my password?"
+  ]
+}

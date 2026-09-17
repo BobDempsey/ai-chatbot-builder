@@ -1,0 +1,48 @@
+/**
+ * `pnpm dev:api:real`: the real routes on slice A's port, over an in-memory
+ * workspace.
+ *
+ * It is how the dashboard and the widget are pointed at the actual answer path
+ * before integration: `ACB_API=http://localhost:5190 pnpm dev:dashboard`. With
+ * no `OPENAI_API_KEY` set it runs the fake embedding and answering clients, so
+ * the whole pipeline works with nothing configured; with a key set it calls the
+ * real providers, which is the only difference between this and a deployment.
+ */
+import { serve } from '@hono/node-server';
+import { createApi } from './app';
+import { createOpenAiAnswerModel } from './models/answer';
+import { createOpenAiEmbeddingClient } from './models/embedding';
+import { extractPdfText, fetchUrlText } from './ingest/sources';
+import { MemoryWorkspaceStore } from './store/memory';
+import { MemorySessionStore } from './store/sessions';
+import { loadTemplates } from './templates';
+import { createFakeAnswerModel, createFakeEmbeddingClient } from './testing';
+
+const apiKey = process.env.OPENAI_API_KEY;
+const embeddings = apiKey ? createOpenAiEmbeddingClient({ apiKey }) : createFakeEmbeddingClient();
+const model = apiKey ? createOpenAiAnswerModel({ apiKey }) : createFakeAnswerModel();
+
+const store = new MemoryWorkspaceStore();
+const sessions = new MemorySessionStore(store);
+
+const api = createApi(
+  {
+    store,
+    embeddings,
+    model,
+    extractPdf: extractPdfText,
+    fetchUrl: fetchUrlText,
+    schedule: (work) => {
+      void work().catch(() => undefined);
+    },
+  },
+  sessions,
+);
+
+const port = Number(process.env.PORT ?? 5190);
+
+const loaded = await loadTemplates(store, embeddings);
+serve({ fetch: api.fetch, port }, (info) => {
+  console.log(`api on http://localhost:${info.port}`);
+  console.log(`templates: ${loaded.written} documents, ${loaded.chunks} chunks, ${apiKey ? 'real' : 'fake'} embeddings`);
+});
