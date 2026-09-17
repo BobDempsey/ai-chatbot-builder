@@ -75,15 +75,15 @@ Owns `apps/dashboard`. Builds against the phase 0 fake route until slice A merge
 
 Owns `apps/widget` and `apps/landing`. Builds against the phase 0 fake route until slice A merges. Does not touch `apps/api` or `apps/dashboard`.
 
-- [ ] 6.1 Build the widget as a standalone bundle that mounts into a shadow root, and verify it renders on a test page with hostile global styles applied
-- [ ] 6.2 Verify the host page is unchanged: no global styles introduced and no host element restyled
-- [ ] 6.3 Split the embed into a tiny entry script plus a lazily imported chat bundle that downloads on first hover, focus or click, and verify a page nobody interacts with never requests the chat bundle and a failed download leaves the bubble retryable
+- [x] 6.1 Build the widget as a standalone bundle that mounts into a shadow root, and verify it renders on a test page with hostile global styles applied
+- [x] 6.2 Verify the host page is unchanged: no global styles introduced and no host element restyled
+- [x] 6.3 Split the embed into a tiny entry script plus a lazily imported chat bundle that downloads on first hover, focus or click, and verify a page nobody interacts with never requests the chat bundle and a failed download leaves the bubble retryable
 - [ ] 6.4 Implement the widget chat against the public bot id using the shared answer renderer, streaming with citations and the human handoff, and verify its answers match the preview chat for the same question
-- [ ] 6.5 Keep the widget conversation in `sessionStorage` with every access guarded, and verify it survives a reload and degrades to memory when storage throws
-- [ ] 6.6 Show the remaining question count once part of the allowance is used, counted client-side over the same window and marked spent on a 429, and verify sending is disabled at zero
-- [ ] 6.7 Run an automated accessibility check on the open widget with an answer, citations and a table on screen, and verify keyboard open, focus trap, Escape close and focus return
-- [ ] 6.8 Build the chat-first landing page (headline, question box, starting prompts) modelled on ai-frontend-advisor's, and verify a prompt opens the chat with that question already sent
-- [ ] 6.9 Embed the widget on that landing page against the demo bot, and verify a visitor gets a cited answer before opening the dashboard
+- [x] 6.5 Keep the widget conversation in `sessionStorage` with every access guarded, and verify it survives a reload and degrades to memory when storage throws
+- [x] 6.6 Show the remaining question count once part of the allowance is used, counted client-side over the same window and marked spent on a 429, and verify sending is disabled at zero
+- [x] 6.7 Run an automated accessibility check on the open widget with an answer, citations and a table on screen, and verify keyboard open, focus trap, Escape close and focus return
+- [x] 6.8 Build the chat-first landing page (headline, question box, starting prompts) modelled on ai-frontend-advisor's, and verify a prompt opens the chat with that question already sent
+- [x] 6.9 Embed the widget on that landing page against the demo bot, and verify a visitor gets a cited answer before opening the dashboard
 
 ## 7. Integration (back on `main`, one slice merged at a time)
 

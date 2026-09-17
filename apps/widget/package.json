@@ -3,24 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": "./src/embed.ts"
+  },
   "scripts": {
     "dev": "vite --port 5182",
     "build": "vite build",
     "preview": "vite preview --port 5182",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
     "@acb/schemas": "workspace:*",
     "@acb/ui": "workspace:*",
+    "lucide-react": "^1.47.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "axe-core": "^4.13.0",
     "jsdom": "^30.1.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.0",
