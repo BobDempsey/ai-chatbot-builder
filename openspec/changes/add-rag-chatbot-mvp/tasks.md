@@ -4,21 +4,21 @@ Ordered as `docs/parallel-slices.md` describes: phase 0 lands on `main` first, t
 
 ## 1. Phase 0: scaffold and toolchain (on `main`, nobody else starts until this lands)
 
-- [ ] 1.1 Create the pnpm workspace with `apps/api`, `apps/dashboard`, `apps/widget`, `apps/landing`, `packages/ui` and `packages/schemas`, and verify `pnpm install` succeeds and `pnpm -r build` runs in every workspace
-- [ ] 1.2 Add TypeScript, Biome and Vitest at the root with shared configs, matching ai-frontend-advisor's toolchain, and verify `pnpm lint`, `pnpm format:check` and `pnpm -r test` pass on empty suites
-- [ ] 1.3 Pin React 19 across the apps and verify a shadcn dialog moves focus in and returns it to its trigger with no `forwardRef` patching
-- [ ] 1.4 Add `.env.example` naming `OPENAI_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and verify the API refuses to boot with a clear message when one is missing
-- [ ] 1.5 Add `.gitattributes` enforcing LF and a CI workflow on Node 22 running typecheck, lint, unit tests and a build, and verify it passes on the empty scaffold
-- [ ] 1.6 Assign each slice its dev and check ports in `docs/parallel-slices.md`, and verify three dev servers run at once without a port collision
+- [x] 1.1 Create the pnpm workspace with `apps/api`, `apps/dashboard`, `apps/widget`, `apps/landing`, `packages/ui` and `packages/schemas`, and verify `pnpm install` succeeds and `pnpm -r build` runs in every workspace
+- [x] 1.2 Add TypeScript, Biome and Vitest at the root with shared configs, matching ai-frontend-advisor's toolchain, and verify `pnpm lint`, `pnpm format:check` and `pnpm -r test` pass on empty suites
+- [x] 1.3 Pin React 19 across the apps and verify a shadcn dialog moves focus in and returns it to its trigger with no `forwardRef` patching
+- [x] 1.4 Add `.env.example` naming `OPENAI_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and verify the API refuses to boot with a clear message when one is missing
+- [x] 1.5 Add `.gitattributes` enforcing LF and a CI workflow on Node 22 running typecheck, lint, unit tests and a build, and verify it passes on the empty scaffold
+- [x] 1.6 Assign each slice its dev and check ports in `docs/parallel-slices.md`, and verify three dev servers run at once without a port collision
 
 ## 2. Phase 0: shared contracts (on `main`, frozen once the slices start)
 
-- [ ] 2.1 Define every request and response shape in `packages/schemas` with Zod: chat, upload, document status, settings, ratings, handoff, and verify the API and both front ends import them and typecheck
-- [ ] 2.2 Set up Tailwind in `packages/ui` with a class prefix and no global preflight leak, and verify a built stylesheet contains only prefixed classes
-- [ ] 2.3 Install the shadcn components the dashboard and widget share (button, input, card, dialog, badge, scroll area) into `packages/ui`, and verify both apps render one shared component
-- [ ] 2.4 Build the shared answer renderer in `packages/ui`: `react-markdown` with `remark-gfm` and `skipHtml`, citations, tables in a focusable scrollable region, and verify a wide table scrolls on its own and axe reports no violations
-- [ ] 2.5 Add a theme layer that takes bot name, colors and greeting as props, and verify a component renders with two different themes in a unit test
-- [ ] 2.6 Ship a fake answer route that satisfies the schemas and streams canned replies with citations, so slices B and C build without slice A, and verify both front ends run against it with no database
+- [x] 2.1 Define every request and response shape in `packages/schemas` with Zod: chat, upload, document status, settings, ratings, handoff, and verify the API and both front ends import them and typecheck
+- [x] 2.2 Set up Tailwind in `packages/ui` with a class prefix and no global preflight leak, and verify a built stylesheet contains only prefixed classes
+- [x] 2.3 Install the shadcn components the dashboard and widget share (button, input, card, dialog, badge, scroll area) into `packages/ui`, and verify both apps render one shared component
+- [x] 2.4 Build the shared answer renderer in `packages/ui`: `react-markdown` with `remark-gfm` and `skipHtml`, citations, tables in a focusable scrollable region, and verify a wide table scrolls on its own and axe reports no violations
+- [x] 2.5 Add a theme layer that takes bot name, colors and greeting as props, and verify a component renders with two different themes in a unit test
+- [x] 2.6 Ship a fake answer route that satisfies the schemas and streams canned replies with citations, so slices B and C build without slice A, and verify both front ends run against it with no database
 
 ## 3. Phase 0: database, sessions and workspaces (on `main`)
 

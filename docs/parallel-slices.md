@@ -34,6 +34,19 @@ After phase 0 (scaffold, schema, RLS, sessions, seeding), the work splits cleanl
 
 The dashboard and the widget both consume `packages/ui`, so that package is phase 0 and frozen for the duration, or one slice owns it and the other waits. The dashboard and the widget both call the answer route, so its request and response shape belongs in `packages/schemas` before either starts.
 
+## Ports, one set per slice
+
+Two worktrees cannot both hold a port, so each slice owns its own. Phase 0 fixed these in the package scripts, and a slice changes only its own row.
+
+| Owner | Dev server | Notes |
+| --- | --- | --- |
+| Phase 0 fake API | 5180 | `pnpm dev:api`. Slices B and C proxy `/api` here until integration. |
+| Slice B, dashboard | 5181 | `pnpm dev:dashboard` |
+| Slice C, widget | 5182 | `pnpm dev:widget` |
+| Slice C, landing page | 5183 | `pnpm dev:landing` |
+
+Point a front end at a different API with `ACB_API=http://localhost:5190 pnpm dev:dashboard`, which is how slice A's real route gets tried before it is merged.
+
 ## Running it
 
 1. Land phase 0 on `main` and commit it. Every slice starts from that commit.

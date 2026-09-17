@@ -1,0 +1,29 @@
+{
+  "name": "ai-chatbot-builder",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @acb/dashboard dev",
+    "dev:dashboard": "pnpm --filter @acb/dashboard dev",
+    "dev:widget": "pnpm --filter @acb/widget dev",
+    "dev:landing": "pnpm --filter @acb/landing dev",
+    "dev:api": "pnpm --filter @acb/api dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.1"
+  }
+}

@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  check:
+    name: typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      # No key and no database: the API tests drive the fake route and the env
+      # guard directly, so nothing here calls a provider or spends credit.
+      - run: pnpm test
+      - run: pnpm build
+      # The widget lands on pages nobody here controls, so an unprefixed class
+      # or a shipped reset is a defect in someone else's site.
+      - name: every class is prefixed and no reset ships
+        run: node scripts/check-css.mjs
+      # `.gitattributes` says LF. A CRLF file would churn every later diff.
+      - name: line endings are unchanged
+        run: git diff --exit-code

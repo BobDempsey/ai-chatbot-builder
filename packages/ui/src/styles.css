@@ -1,0 +1,50 @@
+/*
+ * Every class this project writes is prefixed `acb:`, and preflight is off.
+ *
+ * Both matter for the widget. It mounts inside a shadow root on pages this
+ * project does not control, so a reset would be a change to somebody else's
+ * page, and an unprefixed `.flex` would collide with whatever the host already
+ * has. Tailwind 4 takes the prefix as a variant, so classes read `acb:flex`.
+ *
+ * The dashboard and landing page import this same file. One stylesheet, one
+ * set of tokens, and the widget is never a second design system.
+ */
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme) prefix(acb);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(acb);
+
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f5f7;
+  --color-ink: #16181d;
+  --color-ink-muted: #5c6270;
+  --color-line: #e2e4e9;
+  /* Overridden per bot from its saved accent color. */
+  --color-accent: #2563eb;
+  --color-accent-ink: #ffffff;
+  --radius-panel: 0.75rem;
+}
+
+/*
+ * Dark tokens follow the host page when it says so, and the system otherwise.
+ * The widget reads the host's `prefers-color-scheme`, since it cannot see the
+ * host's own theme class.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-acb-theme='light']) {
+    --color-surface: #16181d;
+    --color-surface-muted: #1f222a;
+    --color-ink: #f3f4f6;
+    --color-ink-muted: #a3a9b6;
+    --color-line: #2c3038;
+  }
+}
+
+:root[data-acb-theme='dark'] {
+  --color-surface: #16181d;
+  --color-surface-muted: #1f222a;
+  --color-ink: #f3f4f6;
+  --color-ink-muted: #a3a9b6;
+  --color-line: #2c3038;
+}

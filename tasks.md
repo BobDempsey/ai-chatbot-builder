@@ -2,8 +2,8 @@
 
 - [x] Initialize the git repo and run `openspec init`
 - [x] Write the spec as an OpenSpec change proposal
-- [ ] Phase 0: scaffold the monorepo, toolchain and CI
-- [ ] Phase 0: shared schemas, UI package and the fake answer route
+- [x] Phase 0: scaffold the monorepo, toolchain and CI
+- [x] Phase 0: shared schemas, UI package and the fake answer route
 - [ ] Phase 0: Supabase schema, RLS, sessions and per-slice branches
 - [ ] Slice A: ingestion, demo corpora, retrieval, answers and the eval
 - [ ] Slice B: admin dashboard
