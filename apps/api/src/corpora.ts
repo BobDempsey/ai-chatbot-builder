@@ -32,11 +32,16 @@ export interface AnswerableQuestion {
   expect: string;
 }
 
+/** A question the set does not cover, with a word its documents never use. */
+export interface DeclinedQuestion {
+  question: string;
+  absent: string;
+}
+
 export interface CorpusQuestions {
   label: string;
   answerable: AnswerableQuestion[];
-  /** Questions the set does not cover, which the bot has to decline. */
-  decline: string[];
+  decline: DeclinedQuestion[];
 }
 
 export const ALL_CORPORA: Corpus[] = corpusSchema.options;

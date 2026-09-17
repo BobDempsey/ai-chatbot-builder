@@ -14,7 +14,9 @@ import {
   DEMO_DATA_LABEL,
   MAX_BODY_BYTES,
   MAX_DOCUMENTS_PER_SESSION,
+  MAX_MESSAGE_CHARS,
   MAX_QUESTIONS_PER_WINDOW,
+  MAX_UPLOAD_BYTES,
   SESSION_COOKIE,
   type ChatEvent,
   type Doc,
@@ -208,6 +210,16 @@ describe('uploads', () => {
     expect(((await response.json()) as { error: string }).error).toContain('5 MB');
   });
 
+  it('rejects an oversized PDF before reading it, naming the limit', async () => {
+    const form = new FormData();
+    form.set('file', new File([new Uint8Array(MAX_UPLOAD_BYTES + 1)], 'huge.pdf', { type: 'application/pdf' }));
+    const before = world.embeddings.calls;
+    const response = await visitor.request('/api/documents/pdf', { method: 'POST', body: form });
+    expect(response.status).toBe(413);
+    expect(((await response.json()) as { error: string }).error).toContain('5 MB');
+    expect(world.embeddings.calls).toBe(before);
+  });
+
   it('rejects an unfetchable URL without creating a document', async () => {
     const failing = await harness({
       fetchUrl: async () => {
@@ -330,6 +342,13 @@ describe('caps', () => {
     });
     expect(response.status).toBe(413);
     expect(world.embeddings.calls).toBe(embedCallsBefore);
+    expect(world.model.calls).toBe(0);
+  });
+
+  it('refuses a question longer than the cap without calling the model', async () => {
+    const response = await visitor.json('/api/chat', { message: 'x'.repeat(MAX_MESSAGE_CHARS + 1) });
+    expect(response.status).toBe(400);
+    expect(((await response.json()) as { error: string }).error).toContain(String(MAX_MESSAGE_CHARS));
     expect(world.model.calls).toBe(0);
   });
 

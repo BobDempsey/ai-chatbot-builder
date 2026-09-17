@@ -9,8 +9,8 @@
     "build": "tsc --noEmit -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "templates:load": "tsx ../../scripts/load-templates.ts",
-    "eval": "tsx ../../scripts/eval.ts"
+    "templates:load": "tsx scripts/load-templates.ts",
+    "eval": "tsx scripts/eval.ts"
   },
   "dependencies": {
     "@acb/schemas": "workspace:*",

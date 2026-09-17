@@ -9,9 +9,9 @@
     { "question": "How much is the equipment budget when I join?", "expect": "1,500 dollar equipment budget" }
   ],
   "decline": [
-    "What is the bonus scheme?",
-    "How many shares do new joiners get?",
-    "Which pension provider do you use?",
-    "How do I reset my password?"
+    { "question": "What is the bonus scheme?", "absent": "bonus" },
+    { "question": "How many shares do new joiners get?", "absent": "shares" },
+    { "question": "Which pension provider do you use?", "absent": "pension" },
+    { "question": "How do I reset my password?", "absent": "password" }
   ]
 }

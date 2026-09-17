@@ -9,9 +9,9 @@
     { "question": "How long do salted damsons need to cure?", "expect": "3 weeks" }
   ],
   "decline": [
-    "How do I make a chocolate cake?",
-    "What wine goes with fish pie?",
-    "How many calories are in the green soup?",
-    "What is your refund policy?"
+    { "question": "How do I make a chocolate cake?", "absent": "chocolate" },
+    { "question": "What wine goes with fish pie?", "absent": "wine" },
+    { "question": "How many calories are in the green soup?", "absent": "calories" },
+    { "question": "What is your refund policy?", "absent": "refund" }
   ]
 }

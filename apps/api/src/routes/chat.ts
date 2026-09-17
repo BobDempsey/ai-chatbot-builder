@@ -14,6 +14,7 @@
 import {
   chatRequestSchema,
   MAX_BODY_BYTES,
+  MAX_MESSAGE_CHARS,
   MAX_QUESTIONS_PER_WINDOW,
   RATE_WINDOW_MS,
   type ChatEvent,
@@ -74,7 +75,7 @@ export async function handleChat(deps: ChatDeps, context: ChatContext): Promise<
 
   const request = chatRequestSchema.safeParse(parsedBody);
   if (!request.success) {
-    return refuse({ status: 400, error: `Type a question first, up to 1000 characters.` });
+    return refuse({ status: 400, error: `Type a question first, up to ${MAX_MESSAGE_CHARS} characters.` });
   }
 
   const asked = await deps.store.countQuestionsSince(context.sessionId, new Date(now() - RATE_WINDOW_MS));

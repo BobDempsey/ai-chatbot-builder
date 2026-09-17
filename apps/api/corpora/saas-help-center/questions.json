@@ -9,9 +9,9 @@
     { "question": "How long does a cancelled workspace stay read-only?", "expect": "read-only for 30 days" }
   ],
   "decline": [
-    "Do you support SAML single sign-on?",
-    "What is your uptime guarantee?",
-    "Which data centre region hosts my workspace?",
-    "How do I bake sourdough?"
+    { "question": "Do you support SAML single sign-on?", "absent": "SAML" },
+    { "question": "What is your uptime guarantee?", "absent": "uptime" },
+    { "question": "Which data centre region hosts my workspace?", "absent": "data centre" },
+    { "question": "How do I bake sourdough?", "absent": "sourdough" }
   ]
 }
