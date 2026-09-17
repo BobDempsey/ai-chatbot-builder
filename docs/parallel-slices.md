@@ -20,7 +20,7 @@ Some rules that come out of the research and out of the advisor build:
 - **Name every file each slice owns, before starting.** A file owned by nobody gets written by both. A file owned by two slices is a merge conflict with extra steps.
 - **Pull shared files out of the slices.** Anything two slices need (the shared UI package, the schemas package, a migration, `scripts/`) is written on `main` first, in a phase 0, then both slices build on it. The advisor did this: phase 0 landed the spec edits and the `uilc:ask` event contract before either agent started.
 - **Foundations are not a slice.** The monorepo scaffold, the database schema, session middleware and the RLS policies are phase 0 work. Everything else depends on them, so parallelising them just produces three incompatible scaffolds.
-- **Give each slice its own ports and its own database.** Two worktrees cannot both hold a dev server port or a check-runner port. In the advisor, two worktrees could not run `pnpm site:check` or `pnpm dev` at once, which cost real time. Assign ports per slice up front, and give each slice its own Supabase branch or schema.
+- **Give each slice its own ports, and a database only if it needs one.** Two worktrees cannot both hold a dev server port or a check-runner port. In the advisor, two worktrees could not run `pnpm site:check` or `pnpm dev` at once, which cost real time. Assign ports per slice up front. A separate database per slice is worth it only when more than one slice writes rows: here only slice A does, so it uses the project directly and the other two run against the fake route. A Supabase branch costs $0.01344 an hour, which buys nothing for a slice that never queries.
 - **Each worktree needs its own install and its own env file.** `.env` is gitignored, so it does not come with the checkout. Run `pnpm install` inside the new worktree; a moved or new working directory needs `CI=1 pnpm install --frozen-lockfile`.
 - **Merge sequentially and keep both sides of a shared check file.** If two slices both add checks to one test script, the merging session keeps both sets rather than taking one side. The advisor hit exactly this on `scripts/site-check.ts`.
 
@@ -46,6 +46,8 @@ Two worktrees cannot both hold a port, so each slice owns its own. Phase 0 fixed
 | Slice C, landing page | 5183 | `pnpm dev:landing` |
 
 Point a front end at a different API with `ACB_API=http://localhost:5190 pnpm dev:dashboard`, which is how slice A's real route gets tried before it is merged.
+
+Only slice A touches the database, so it works against the `ai-chatbot-builder` project directly. If it starts needing to wipe and reseed often, `supabase start` gives it a local stack rather than a paid branch.
 
 ## Running it
 

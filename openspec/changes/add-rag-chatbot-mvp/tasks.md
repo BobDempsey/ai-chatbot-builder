@@ -29,7 +29,7 @@ Ordered as `docs/parallel-slices.md` describes: phase 0 lands on `main` first, t
 - [x] 3.5 Implement session minting in the Hono API with an httpOnly, Secure, SameSite=Lax cookie and a 24-hour expiry, and verify a first request sets the cookie and a second reuses it
 - [x] 3.6 Add middleware that resolves the session and sets the database claim on every request, and verify a request with no cookie mints one and a request with an expired cookie starts fresh
 - [x] 3.7 Add an integration test proving cross-session access returns 404 for documents, bots, conversations and ratings
-- [ ] 3.8 Give each slice its own Supabase branch or schema, and verify two slices can migrate and seed without touching each other's rows
+- [x] 3.8 Confirm only slice A queries a database, so the project is used directly and no per-slice branch is bought; slices B and C run against the phase 0 fake
 
 ## 4. Slice A: ingestion, retrieval and answering
 

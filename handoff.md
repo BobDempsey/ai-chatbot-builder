@@ -79,4 +79,4 @@ Five migrations are applied and kept in `supabase/migrations/`, so the schema is
 
 Isolation was checked against real rows rather than assumed: under the `anon` role, session A saw its own two documents and none of session B's, `match_chunks` returned only A's ready chunks in distance order and skipped a document still indexing, a query with no `request.acb_session` claim saw nothing at all, and an expired session became unreachable before any sweep ran. Probe rows were deleted afterwards. The security advisor reports no findings.
 
-Branching costs $0.01344 an hour per branch, so per-slice database branches are not free.
+Branching costs $0.01344 an hour per branch, so the plan's per-slice database copies were dropped: only slice A queries a database, and slices B and C run against the phase 0 fake route. Slice A uses the project directly, and takes a local stack with `supabase start` if it needs to wipe and reseed often.

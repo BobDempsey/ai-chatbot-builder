@@ -4,7 +4,7 @@
 - [x] Write the spec as an OpenSpec change proposal
 - [x] Phase 0: scaffold the monorepo, toolchain and CI
 - [x] Phase 0: shared schemas, UI package and the fake answer route
-- [ ] Phase 0: Supabase schema, RLS, sessions and per-slice branches
+- [x] Phase 0: Supabase schema, RLS, sessions and the retrieval function
 - [ ] Slice A: ingestion, demo corpora, retrieval, answers and the eval
 - [ ] Slice B: admin dashboard
 - [ ] Slice C: embeddable widget and the chat-first landing page
