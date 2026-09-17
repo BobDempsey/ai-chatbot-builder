@@ -1,0 +1,17 @@
+{
+  "label": "Thistledown Kitchen recipe collection",
+  "answerable": [
+    { "question": "What temperature does jam set at?", "expect": "105 C" },
+    { "question": "How long does the overnight hearth loaf rest before shaping?", "expect": "12 hours" },
+    { "question": "How much sugar goes into quince jelly?", "expect": "450 g of sugar per 600 ml" },
+    { "question": "How many does the fish pie serve?", "expect": "Serves 4" },
+    { "question": "Why did my loaf come out flat?", "expect": "over-proved" },
+    { "question": "How long do salted damsons need to cure?", "expect": "3 weeks" }
+  ],
+  "decline": [
+    { "question": "How do I make a chocolate cake?", "absent": "chocolate" },
+    { "question": "What wine goes with fish pie?", "absent": "wine" },
+    { "question": "How many calories are in the green soup?", "absent": "calories" },
+    { "question": "What is your refund policy?", "absent": "refund" }
+  ]
+}

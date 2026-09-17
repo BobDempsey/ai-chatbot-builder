@@ -1,0 +1,17 @@
+{
+  "label": "Northwind Cloud help center",
+  "answerable": [
+    { "question": "How long do I have to ask for a refund?", "expect": "30 days" },
+    { "question": "What does the Current plan cost per seat?", "expect": "44 dollars" },
+    { "question": "How long is a password reset link valid?", "expect": "60 minutes" },
+    { "question": "How many failed sign-ins lock an account?", "expect": "Ten failed sign-in attempts" },
+    { "question": "When does a downgrade take effect?", "expect": "start of the next billing period" },
+    { "question": "How long does a cancelled workspace stay read-only?", "expect": "read-only for 30 days" }
+  ],
+  "decline": [
+    { "question": "Do you support SAML single sign-on?", "absent": "SAML" },
+    { "question": "What is your uptime guarantee?", "absent": "uptime" },
+    { "question": "Which data centre region hosts my workspace?", "absent": "data centre" },
+    { "question": "How do I bake sourdough?", "absent": "sourdough" }
+  ]
+}

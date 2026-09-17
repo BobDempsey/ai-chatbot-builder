@@ -35,26 +35,26 @@ Ordered as `docs/parallel-slices.md` describes: phase 0 lands on `main` first, t
 
 Owns `apps/api` (except the session middleware from phase 0), the demo corpora and the eval script. Does not touch `apps/dashboard`, `apps/widget` or `apps/landing`.
 
-- [ ] 4.1 Implement PDF text extraction behind an upload endpoint with the size cap, and verify a sample PDF yields text and an oversized file is rejected with the limit named
-- [ ] 4.2 Implement the Markdown and URL sources, and verify a pasted document indexes and an unfetchable URL is rejected without creating a partial document
-- [ ] 4.3 Implement chunking that keeps document, ordinal and nearest heading, and verify chunk boundaries and heading capture in unit tests
+- [x] 4.1 Implement PDF text extraction behind an upload endpoint with the size cap, and verify a sample PDF yields text and an oversized file is rejected with the limit named
+- [x] 4.2 Implement the Markdown and URL sources, and verify a pasted document indexes and an unfetchable URL is rejected without creating a partial document
+- [x] 4.3 Implement chunking that keeps document, ordinal and nearest heading, and verify chunk boundaries and heading capture in unit tests
 - [ ] 4.4 Implement embedding with OpenAI `text-embedding-3-small` and store vectors, and verify a document reaches `ready` with a chunk count matching the chunker
-- [ ] 4.5 Make ingestion a background job with `queued`, `extracting`, `embedding`, `ready` and `failed` states behind a status endpoint, and verify a mid-run embedding failure marks the document failed with no chunks left for retrieval
-- [ ] 4.6 Write the three fictional doc sets (SaaS help center, recipe collection, employee handbook) as source Markdown labelled demo data, and verify each set covers the questions listed in its own fixture file
-- [ ] 4.7 Build the template loader that indexes each set once into read-only template rows, and verify re-running it is idempotent
-- [ ] 4.8 Implement seeding a new session by copying template documents, chunks, embeddings, conversations and ratings, and verify a brand-new session can answer a seeded question with no uploads
-- [ ] 4.9 Add the doc-set picker endpoint, and verify switching sets replaces the workspace's documents and changes the bot's answers
-- [ ] 4.10 Verify template immutability: deleting seeded documents in one session leaves the next new session fully seeded
-- [ ] 4.11 Shape the answer route as a thin handler with retrieval, prompt building and the model client injected, as ai-frontend-advisor's `api/_lib/handler.ts` does, and verify the whole request path is unit-testable with a fake model and no API key
-- [ ] 4.12 Implement top-k retrieval over the session's ready chunks with a relevance floor, and verify chunks from other sessions and unfinished documents are never returned
+- [x] 4.5 Make ingestion a background job with `queued`, `extracting`, `embedding`, `ready` and `failed` states behind a status endpoint, and verify a mid-run embedding failure marks the document failed with no chunks left for retrieval
+- [x] 4.6 Write the three fictional doc sets (SaaS help center, recipe collection, employee handbook) as source Markdown labelled demo data, and verify each set covers the questions listed in its own fixture file
+- [x] 4.7 Build the template loader that indexes each set once into read-only template rows, and verify re-running it is idempotent
+- [x] 4.8 Implement seeding a new session by copying template documents, chunks, embeddings, conversations and ratings, and verify a brand-new session can answer a seeded question with no uploads
+- [x] 4.9 Add the doc-set picker endpoint, and verify switching sets replaces the workspace's documents and changes the bot's answers
+- [x] 4.10 Verify template immutability: deleting seeded documents in one session leaves the next new session fully seeded
+- [x] 4.11 Shape the answer route as a thin handler with retrieval, prompt building and the model client injected, as ai-frontend-advisor's `api/_lib/handler.ts` does, and verify the whole request path is unit-testable with a fake model and no API key
+- [x] 4.12 Implement top-k retrieval over the session's ready chunks with a relevance floor, and verify chunks from other sessions and unfinished documents are never returned
 - [ ] 4.13 Implement the `gpt-5.6-luna` answer call constrained to the retrieved text, streamed to the client, and verify text arrives before the answer completes
-- [ ] 4.14 Map model citation indices to document and section server-side, and verify every rendered citation resolves to a retrieved chunk and no citation can be fabricated
-- [ ] 4.15 Implement the low-confidence path: no model call, a stated inability to answer, and the human-handoff email capture, and verify a malformed email is rejected and records nothing
-- [ ] 4.16 Record conversations, messages, citations, ratings and unanswered questions, and verify a declined question appears in the unanswered list
-- [ ] 4.17 Cap message length, history turns, per-turn length and body size on the server, refusing an oversized body before parsing it, and verify no paid call is made on a refusal
-- [ ] 4.18 Map every provider failure (timeout, rate limit, empty reply, missing key) to one plain sentence, and verify a failure sentence is never replayed to the model as history
-- [ ] 4.19 Authorize the chat route by public bot id across origins while keeping every other route same-origin and cookie-bound, and verify a bot id alone cannot read logs, change settings or upload
-- [ ] 4.20 Enforce per-session caps on upload size, document count and questions per window, and verify each refusal names its limit and skips the paid API call
+- [x] 4.14 Map model citation indices to document and section server-side, and verify every rendered citation resolves to a retrieved chunk and no citation can be fabricated
+- [x] 4.15 Implement the low-confidence path: no model call, a stated inability to answer, and the human-handoff email capture, and verify a malformed email is rejected and records nothing
+- [x] 4.16 Record conversations, messages, citations, ratings and unanswered questions, and verify a declined question appears in the unanswered list
+- [x] 4.17 Cap message length, history turns, per-turn length and body size on the server, refusing an oversized body before parsing it, and verify no paid call is made on a refusal
+- [x] 4.18 Map every provider failure (timeout, rate limit, empty reply, missing key) to one plain sentence, and verify a failure sentence is never replayed to the model as history
+- [x] 4.19 Authorize the chat route by public bot id across origins while keeping every other route same-origin and cookie-bound, and verify a bot id alone cannot read logs, change settings or upload
+- [x] 4.20 Enforce per-session caps on upload size, document count and questions per window, and verify each refusal names its limit and skips the paid API call
 - [ ] 4.21 Calibrate chunk size, overlap and the relevance floor against the three seeded corpora, and verify a fixture of should-answer and should-decline questions passes
 - [ ] 4.22 Build an eval script modelled on `pnpm advisor:eval` that asks the live model a fixed question set per corpus, and verify it fails a reply that cites an unretrieved chunk, invents a figure, or answers a question the corpus does not cover
 
