@@ -62,14 +62,14 @@ Owns `apps/api` (except the session middleware from phase 0), the demo corpora a
 
 Owns `apps/dashboard`. Builds against the phase 0 fake route until slice A merges. Does not touch `apps/api`, `apps/widget` or `apps/landing`.
 
-- [ ] 5.1 Build the settings screen for name, colors, greeting and tone with Zod validation, and verify an invalid color is rejected and previous values survive
-- [ ] 5.2 Build the preview chat beside the settings using the shared answer renderer, and verify a settings change and a newly indexed document both reflect without a reload
-- [ ] 5.3 Build the upload and doc-set picker UI with the indexing progress view polling the status endpoint, and verify an upload advances to ready without a page reload
-- [ ] 5.4 Build the conversation log with citations, and verify an exchange opens and shows its sources
-- [ ] 5.5 Build the ratings summary and thumbs controls, and verify a rating persists and appears in the summary
-- [ ] 5.6 Build the unanswered-question list, and verify declined questions land there with their captured emails
+- [x] 5.1 Build the settings screen for name, colors, greeting and tone with Zod validation, and verify an invalid color is rejected and previous values survive
+- [x] 5.2 Build the preview chat beside the settings using the shared answer renderer, and verify a settings change and a newly indexed document both reflect without a reload
+- [x] 5.3 Build the upload and doc-set picker UI with the indexing progress view polling the status endpoint, and verify an upload advances to ready without a page reload
+- [x] 5.4 Build the conversation log with citations, and verify an exchange opens and shows its sources
+- [x] 5.5 Build the ratings summary and thumbs controls, and verify a rating persists and appears in the summary
+- [x] 5.6 Build the unanswered-question list, and verify declined questions land there with their captured emails
 - [ ] 5.7 Show the copyable one-line script tag carrying the bot id, and verify the copied text matches what the widget slice expects
-- [ ] 5.8 Run an accessibility check over every dashboard screen, and verify axe reports no violations at 1440 and 375
+- [x] 5.8 Run an accessibility check over every dashboard screen, and verify axe reports no violations at 1440 and 375
 
 ## 6. Slice C: widget and landing page
 
