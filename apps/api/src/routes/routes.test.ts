@@ -320,6 +320,34 @@ describe('the decline path', () => {
     expect(after.questions.some((question) => question.email === 'ada@example.com')).toBe(true);
   });
 
+  it('declines when the model says the sources do not answer, and sends no partial answer', async () => {
+    // Retrieval cannot catch this. A question like "what wine goes with fish
+    // pie" pulls the fish pie chunk at a close distance, because it is about
+    // fish pie. Only the model can see that the chunk does not hold the answer.
+    const world = await harness({ model: createFakeAnswerModel({ script: ['NO_', 'ANSWER'] }) });
+    const asking = new Visitor(world.api);
+    const { events } = await asking.ask('How long do I have to ask for a refund?');
+
+    expect(events.map((event) => event.type)).toEqual(['declined']);
+    expect(events.some((event) => event.type === 'delta')).toBe(false);
+
+    const list = (await (await asking.request('/api/unanswered')).json()) as { questions: { question: string }[] };
+    expect(list.questions.map((question) => question.question)).toContain('How long do I have to ask for a refund?');
+  });
+
+  it('streams an answer that merely starts with the same letters', async () => {
+    const world = await harness({ model: createFakeAnswerModel({ script: ['NO', ' refund is due after 30 days. [1]'] }) });
+    const asking = new Visitor(world.api);
+    const { events } = await asking.ask('How long do I have to ask for a refund?');
+
+    const text = events
+      .filter((event) => event.type === 'delta')
+      .map((event) => (event.type === 'delta' ? event.text : ''))
+      .join('');
+    expect(text).toBe('NO refund is due after 30 days. [1]');
+    expect(events.at(-1)?.type).toBe('done');
+  });
+
   it('rejects a malformed email and records nothing', async () => {
     const { events } = await visitor.ask('Which data centre region hosts my workspace?');
     const declined = events[0];

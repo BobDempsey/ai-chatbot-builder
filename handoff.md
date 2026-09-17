@@ -80,3 +80,15 @@ Five migrations are applied and kept in `supabase/migrations/`, so the schema is
 Isolation was checked against real rows rather than assumed: under the `anon` role, session A saw its own two documents and none of session B's, `match_chunks` returned only A's ready chunks in distance order and skipped a document still indexing, a query with no `request.acb_session` claim saw nothing at all, and an expired session became unreachable before any sweep ran. Probe rows were deleted afterwards. The security advisor reports no findings.
 
 Branching costs $0.01344 an hour per branch, so the plan's per-slice database copies were dropped: only slice A queries a database, and slices B and C run against the phase 0 fake route. Slice A uses the project directly, and takes a local stack with `supabase start` if it needs to wipe and reseed often.
+
+### The live stack, verified 2026-09-17
+
+`.env` holds `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_DB_URL`, all SET, all gitignored. `pnpm dev:api` reads them and degrades rather than refusing to start: without a key it uses fake clients and a looser floor, without a database URL it uses an in-memory workspace. With both it is the deployment, running locally.
+
+The API talks to Postgres directly rather than through PostgREST, because a policy needs `request.acb_session` set inside the transaction and the service role key would bypass the policies entirely. `pnpm --filter @acb/api templates:load` indexed the three corpora into the template rows: 9 documents, 51 chunks, real vectors.
+
+Two things only showed up once it ran against the real project. Sessions existed only in memory, so seeding a workspace inserted a bot whose session row did not exist, and every policy calls `session_is_live`, so the insert was refused by its own RETURNING read. `PostgresSessionStore` fixes that: the row comes first, then the seed. And the relevance floor cannot separate a source about the right subject from one that holds the answer: "what wine goes with fish pie" retrieves the fish pie chunk at 0.51 because it is about fish pie. The model catches that instead, replying with `NO_ANSWER`, which the route turns into the decline and the offer of a human. Nothing streams to the reader until that token is ruled out.
+
+The floor is now measured rather than guessed: answerable questions land between 0.35 and 0.51, off-subject ones at 0.66 and above, so 0.62 sits between them.
+
+`pnpm --filter @acb/api eval` asks all 31 fixture questions against the live model and currently passes every one. It spends credit, so run it by hand, never in CI.

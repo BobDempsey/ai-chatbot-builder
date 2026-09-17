@@ -16,10 +16,15 @@ export const RETRIEVAL_LIMIT = 6;
 /**
  * The largest cosine distance still counted as relevant.
  *
- * This is a starting value, not a measured one. It wants calibrating against
- * `text-embedding-3-small` over the three seeded corpora, using the
- * should-answer and should-decline questions in each `questions.json`, which
- * needs a provider key. Until then, callers that know better pass their own.
+ * Measured on 2026-09-17 against `text-embedding-3-small` over the three
+ * seeded corpora. Questions the corpora answer come back between 0.35 and 0.51;
+ * questions on another subject entirely sit at 0.66 and above. 0.62 separates
+ * them with room on both sides.
+ *
+ * What the floor cannot do is separate a source about the right subject from
+ * one that holds the answer. "What wine goes with fish pie" retrieves the fish
+ * pie chunk at 0.51, because it is about fish pie. That case is the model's to
+ * catch, and it does: see `NO_ANSWER` in `prompt.ts`.
  */
 export const RELEVANCE_FLOOR = 0.62;
 

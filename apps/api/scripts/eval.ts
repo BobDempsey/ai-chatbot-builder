@@ -118,7 +118,9 @@ for (const corpus of ALL_CORPORA) {
       continue;
     }
 
-    if (!text.includes(expect.split(' ')[0] as string)) {
+    // Case-insensitive: the corpus writes "Serves 4" at the head of a line and
+    // a good answer writes "the fish pie serves 4". That is the same fact.
+    if (!text.toLowerCase().includes((expect.split(' ')[0] as string).toLowerCase())) {
       failures.push({ corpus, question, reason: `the answer misses what the corpus says: ${expect}` });
       continue;
     }

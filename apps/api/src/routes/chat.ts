@@ -24,7 +24,7 @@ import type { AnswerModel } from '../models/answer';
 import type { EmbeddingClient } from '../models/embedding';
 import { failureSentence } from '../models/failures';
 import { CitationFilter } from '../retrieval/citations';
-import { boundHistory, buildSystemPrompt } from '../retrieval/prompt';
+import { boundHistory, buildSystemPrompt, NO_ANSWER } from '../retrieval/prompt';
 import { retrieveChunks, type RetrievalOptions } from '../retrieval/retrieve';
 import type { BotRecord, WorkspaceStore } from '../store/store';
 
@@ -111,18 +111,60 @@ export async function handleChat(deps: ChatDeps, context: ChatContext): Promise<
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       let answer = '';
+      // Nothing is sent until the reply has ruled out the decline token. The
+      // model only knows the sources do not answer the question once it has
+      // read them, and a reader must never see half an answer that turns into
+      // "I cannot answer that".
+      let held = '';
+      let releasing = false;
+      const release = (text: string) => {
+        if (!text) return;
+        answer += text;
+        controller.enqueue(line({ type: 'delta', text }));
+      };
+      const consider = (text: string): 'declined' | 'answering' | 'undecided' => {
+        held += text;
+        const trimmed = held.trimStart();
+        if (NO_ANSWER.startsWith(trimmed.slice(0, NO_ANSWER.length))) {
+          return trimmed.length >= NO_ANSWER.length ? 'declined' : 'undecided';
+        }
+        return 'answering';
+      };
+
       try {
         for await (const delta of deps.model.stream(prompt)) {
           const text = filter.push(delta);
           if (!text) continue;
-          answer += text;
-          controller.enqueue(line({ type: 'delta', text }));
+          if (releasing) {
+            release(text);
+            continue;
+          }
+          const verdict = consider(text);
+          if (verdict === 'declined') {
+            const { id } = await deps.store.recordUnanswered(context.sessionId, message);
+            controller.enqueue(line({ type: 'declined', message: DECLINE_SENTENCE, questionId: id }));
+            controller.close();
+            return;
+          }
+          if (verdict === 'answering') {
+            releasing = true;
+            release(held);
+            held = '';
+          }
         }
         const tail = filter.flush();
-        if (tail) {
-          answer += tail;
-          controller.enqueue(line({ type: 'delta', text: tail }));
+        if (!releasing) {
+          // The whole reply fitted inside the held buffer, which is what a bare
+          // decline token looks like.
+          if (`${held}${tail}`.trim() === NO_ANSWER) {
+            const { id } = await deps.store.recordUnanswered(context.sessionId, message);
+            controller.enqueue(line({ type: 'declined', message: DECLINE_SENTENCE, questionId: id }));
+            controller.close();
+            return;
+          }
+          release(held);
         }
+        release(tail);
       } catch (error) {
         // The failure sentence is sent but never recorded, so it can never be
         // replayed to the model as history.
