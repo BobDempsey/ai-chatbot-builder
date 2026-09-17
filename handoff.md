@@ -44,3 +44,15 @@ The app is deployed, the demo works end to end without an account, the README li
 ### Open decisions
 
 Nothing is blocking. Auth is settled and out of scope: no accounts, no Supabase Auth, no login screen. Anonymous sessions plus Vercel Firewall replace it. Every table is keyed by session id, so plan row-level isolation on that from the first migration rather than retrofitting it.
+
+### Prior art: ai-frontend-advisor
+
+`C:\codei-frontend-advisor` is the owner's other deployed AI project, on the same Vercel account and the same domain. Reviewed on 2026-09-17; what it settles is folded into the change's design and tasks. Read it before building the API or the widget, rather than solving these again.
+
+Worth copying: the thin Vercel Function with its work in `api/_lib/` and the handler taking model, prompt and limiter as arguments, which is why 36 unit tests run in CI with a fake model and no key; the mapping of every provider failure to one plain sentence for the reader; server-side caps on message length, history turns and body size, with the body checked before it is parsed; the lazy chat loader, a 2.4 KB entry that pulls a 124 KB gzipped island on first hover, focus or click; the `advisor:eval` harness that asks the live model fixed questions and fails a reply quoting a figure absent from its grounding; and the `localStorage` quota hint that tells a reader what is left, since the firewall reports nothing.
+
+Deliberately not copied: its `isSameOrigin` check, which refuses any request whose Origin does not match the host. That is right for a chat that only runs on its own site and wrong here, because the widget is embedded on other people's pages. The chat route authorizes by public bot id across origins; every dashboard route stays same-origin and cookie-bound. The advisor also does not stream, returning `{ reply }` as one body, so streaming is new work.
+
+Toolchain to match: pnpm 10.15.1, Node 22 in CI, Biome rather than ESLint and Prettier, Vitest, LF newlines enforced by `.gitattributes`.
+
+Gotchas already paid for there: `trailingSlash: true` means posting to `/api/chat/` or taking a 308; files a function reads at runtime must be listed under `includeFiles` in `vercel.json` and are read from `process.cwd()`; the shadcn CLI writes React 19 components where `ref` is a plain prop, so on React 18 anything needing a ref must be wrapped in `forwardRef` or focus management breaks; `react-markdown` needs `remark-gfm` for tables and `skipHtml` for safety, and a table belongs in a focusable scrollable region or axe fails it; firewall rules live in the Vercel dashboard, not in the repo; and moving the repo folder needs `CI=1 pnpm install --frozen-lockfile`.
