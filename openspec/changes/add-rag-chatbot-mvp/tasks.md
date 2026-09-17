@@ -5,14 +5,14 @@
 - [ ] 1.1 Create the pnpm workspace with `apps/api`, `apps/dashboard`, `apps/widget` and `packages/ui`, and verify `pnpm install` succeeds and `pnpm -r build` runs in every workspace
 - [ ] 1.2 Add TypeScript, Biome and Vitest at the root with shared configs, matching ai-frontend-advisor's toolchain, and verify `pnpm lint`, `pnpm format:check` and `pnpm -r test` pass on empty suites
 - [ ] 1.3 Add Zod and a shared `packages/schemas` workspace for request and response types, and verify the API and dashboard both import one schema and typecheck
-- [ ] 1.4 Add `.env.example` naming `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and verify the API refuses to boot with a clear message when one is missing
+- [ ] 1.4 Add `.env.example` naming `OPENAI_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and verify the API refuses to boot with a clear message when one is missing
 - [ ] 1.5 Add `.gitattributes` enforcing LF and a CI workflow on Node 22 running typecheck, lint, unit tests and a build, and verify it passes on the empty scaffold
 
 ## 2. Design system
 
 - [ ] 2.1 Set up Tailwind in `packages/ui` with a class prefix and no global preflight leak, and verify a built stylesheet contains only prefixed classes
 - [ ] 2.2 Install the shadcn components the dashboard and widget share (button, input, card, dialog, badge, scroll area) into `packages/ui`, and verify both apps render one shared component
-- [ ] 2.3 Wrap every shared component that takes a ref in `forwardRef` if the apps run React 18, and verify focus moves into a dialog and returns to its trigger
+- [ ] 2.3 Pin React 19 across the apps and verify a shadcn dialog moves focus in and returns it to its trigger with no `forwardRef` patching
 - [ ] 2.4 Render answers with `react-markdown` plus `remark-gfm` and `skipHtml`, tables inside a focusable scrollable region, and verify a wide table scrolls on its own and axe reports no violations
 - [ ] 2.5 Add a theme layer that takes bot name, colors and greeting as props, and verify a component renders with two different themes in a unit test
 
@@ -50,7 +50,7 @@
 
 - [ ] 7.0 Shape the answer route as a thin handler with retrieval, prompt building and the model client injected, as ai-frontend-advisor's `api/_lib/handler.ts` does, and verify the whole request path is unit-testable with a fake model and no API key
 - [ ] 7.1 Implement top-k retrieval over the session's ready chunks with a relevance floor, and verify chunks from other sessions and unfinished documents are never returned
-- [ ] 7.2 Implement the Claude answer call constrained to the retrieved text, streamed to the client, and verify text arrives before the answer completes
+- [ ] 7.2 Implement the `gpt-5.6-luna` answer call constrained to the retrieved text, streamed to the client, and verify text arrives before the answer completes
 - [ ] 7.3 Map model citation indices to document and section server-side, and verify every rendered citation resolves to a retrieved chunk and no citation can be fabricated
 - [ ] 7.4 Implement the low-confidence path: no model call, a stated inability to answer, and the human-handoff email capture, and verify a malformed email is rejected and records nothing
 - [ ] 7.5 Record conversations, messages, citations, ratings and unanswered questions, and verify a declined question appears in the unanswered list
@@ -77,7 +77,8 @@
 - [ ] 9.3b Keep the widget conversation in `sessionStorage` with every access guarded, and verify it survives a reload and degrades to memory when storage throws
 - [ ] 9.3c Run an automated accessibility check on the open widget with an answer, citations and a table on screen, and verify keyboard open, focus trap, Escape close and focus return
 - [ ] 9.4 Generate the one-line script tag in the dashboard carrying the bot id, and verify pasting it into a blank page produces a working chat
-- [ ] 9.5 Embed the widget on the product's own landing page, and verify a visitor can chat before opening the dashboard
+- [ ] 9.5 Build the chat-first landing page (headline, question box, starting prompts) modelled on ai-frontend-advisor's, and verify a prompt opens the chat with that question already sent
+- [ ] 9.6 Embed the widget on that landing page against the demo bot, and verify a visitor gets a cited answer before opening the dashboard
 
 ## 10. Limits and cleanup
 
@@ -89,7 +90,7 @@
 
 ## 11. Ship
 
-- [ ] 11.1 Deploy to the Vercel subdomain with migrations applied and env vars set as Sensitive, list any runtime-read file under `includeFiles`, and verify the deployed app answers a seeded question end to end
+- [ ] 11.1 Deploy to the Vercel subdomain with migrations applied and `OPENAI_API_KEY` plus the Supabase keys set as Sensitive, list any runtime-read file under `includeFiles`, and verify the deployed app answers a seeded question end to end
 - [ ] 11.1a Confirm the client posts to the trailing-slash path if `trailingSlash` is on, and verify no request takes a 308 before reaching the function
 - [ ] 11.2 Run the full flow on the deployed site as a first-time visitor with no account, and verify seeding, upload, answer with citations, rating and the widget all work
 - [ ] 11.3 Write the README linking the live site and explaining the RAG pipeline, and verify a reader can follow it from upload to citation

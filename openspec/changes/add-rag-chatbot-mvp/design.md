@@ -19,7 +19,7 @@ Two consequences drive the design. Vercel functions keep no state between reques
 
 - Multi-tenancy, teams, roles or billing. There are no accounts, so there is nothing to scope beyond a session.
 - Durable customer data. Every workspace is expected to die within a day.
-- Model or provider abstraction. Claude answers and OpenAI embeds; swapping either is a later change.
+- Model or provider abstraction. One provider answers and embeds: OpenAI, `gpt-5.6-luna` for answers and `text-embedding-3-small` for vectors, matching ai-frontend-advisor. Swapping either is a later change.
 - Horizontal scale. Portfolio traffic, not production traffic.
 
 ## Decisions
@@ -36,9 +36,11 @@ Two consequences drive the design. Vercel functions keep no state between reques
 
 **Ingestion runs as a background job with polled status, not inside the upload request.** Embedding a PDF exceeds a comfortable request budget on serverless. The upload request stores the document as `queued` and returns; a worker route processes it and advances the state. The dashboard polls that state, which is also what makes the progress bar honest rather than animated.
 
-**Retrieval scored by cosine distance with a relevance floor.** Top-k over the session's ready chunks, and if the best match sits below the floor the system does not call Claude at all: it returns the "I cannot answer that" path. This is both the honest answer and the cheaper one. The floor is a tunable constant, and it wants calibrating against the three seeded document sets rather than guessing once.
+**Retrieval scored by cosine distance with a relevance floor.** Top-k over the session's ready chunks, and if the best match sits below the floor the system does not call the answering model at all: it returns the "I cannot answer that" path. This is both the honest answer and the cheaper one. The floor is a tunable constant, and it wants calibrating against the three seeded document sets rather than guessing once.
 
-**Answers streamed from the API, citations resolved server-side.** Claude is asked to cite retrieved chunks by index, and the API maps those indices to document and section before they reach the client. Letting the model emit URLs invites fabricated ones; mapping from the retrieval set means a citation cannot point at something that was not retrieved.
+**Answers streamed from the API, citations resolved server-side.** The model is asked to cite retrieved chunks by index, and the API maps those indices to document and section before they reach the client. Letting the model emit URLs invites fabricated ones; mapping from the retrieval set means a citation cannot point at something that was not retrieved.
+
+**React 19 and a chat-first landing page.** Radix, react-markdown and lucide-react all support 19, and the shadcn CLI emits 19-style components, so none of the advisor's `forwardRef` patching is needed. The landing page copies the advisor's shape: a headline, a question box and starting prompts, with the live widget answering from the demo bot. A visitor gets a cited answer before meeting the dashboard, which is the whole point of the demo.
 
 **Widget in a shadow root with its own bundle.** Tailwind is prefixed and its styles are injected into the shadow root, so nothing leaks either direction. The widget builds as a standalone IIFE and shares components with the dashboard through the UI package, which is why shadcn was chosen over Chakra: copy-in components with no provider or global reset can live inside a shadow root without dragging a runtime along.
 
@@ -82,7 +84,7 @@ Two consequences drive the design. Vercel functions keep no state between reques
 
 ## Migration Plan
 
-No migration. New repository, no users, no data to preserve. Deployment is the first push to the Vercel project, with `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set as environment variables and the database migrations applied before the first request. Rollback is redeploying the previous build; since no data outlives a day, there is nothing to restore.
+No migration. New repository, no users, no data to preserve. Deployment is the first push to the Vercel project, with `OPENAI_API_KEY`, `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set as Sensitive environment variables and the database migrations applied before the first request. Rollback is redeploying the previous build; since no data outlives a day, there is nothing to restore.
 
 ## Open Questions
 

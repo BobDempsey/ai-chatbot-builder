@@ -100,11 +100,16 @@ The widget SHALL be operable by keyboard alone, SHALL move focus into the panel 
 - **WHEN** an answer contains a table wider than the panel
 - **THEN** the table scrolls sideways inside its own focusable region, and neither the panel nor the host page scrolls sideways
 
-### Requirement: The landing page runs the live widget
+### Requirement: The landing page leads with the chat
 
-The product's own landing page SHALL embed the widget against the demo bot, so a visitor can chat with it before opening the dashboard.
+The product's landing page SHALL lead with a headline, a question box and a few starting prompts, and SHALL embed the live widget against the demo bot, so a visitor gets a cited answer before reaching the dashboard.
 
-#### Scenario: Chatting from the landing page
+#### Scenario: Asking from the landing page
 
-- **WHEN** a visitor lands on the marketing page and opens the bubble
-- **THEN** they can ask the demo bot a question and get a cited answer without navigating anywhere else
+- **WHEN** a visitor types a question into the landing page's box and sends it
+- **THEN** the chat opens with that question already sent, and the answer streams in with citations
+
+#### Scenario: Starting prompts
+
+- **WHEN** a visitor picks one of the offered starting prompts
+- **THEN** the chat opens and answers it, with no navigation and no dashboard visit first

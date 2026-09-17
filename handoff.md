@@ -8,7 +8,7 @@ Build a new portfolio project in its own repo, named `ai-chatbot-builder` (the w
 
 ### Stack
 
-React for the admin dashboard and the chat widget, and Node.js with TypeScript for the API. Styling is shadcn/ui on Radix with Tailwind, for both the dashboard and the widget. Chakra UI v3 was considered and rejected: it is fine for the dashboard, but the widget ships into third-party pages, where Chakra's provider, global reset and Emotion-injected styles cost 35-45KB gzipped and risk style bleed both ways. shadcn is copy-in components over about 10KB of shared deps, and Tailwind can be prefixed and scoped, so the widget renders inside a shadow root and the preview chat reuses the same components as the embedded one. The repo is one pnpm monorepo with `api`, `dashboard` and `widget` workspaces, plus a shared UI package, so the preview chat and the embedded widget render the same components. The API workspace runs Hono on Vercel functions. Supabase Postgres with pgvector stores document chunks and embeddings, OpenAI `text-embedding-3-small` produces the vectors, and the Claude API writes the answers (so both `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` are needed, PLACEHOLDER until set in `.env`). Zod validates input on both sides. Host it on Vercel under a `bobdempsey83.com` subdomain, matching AI Storefront and AI Frontend Advisor. Write a spec first and tests before code, as in the owner's other projects. Spec work goes through OpenSpec: run `openspec init` in this repo and drive every change through an OpenSpec change proposal rather than hand-written spec files.
+React for the admin dashboard and the chat widget, and Node.js with TypeScript for the API. Styling is shadcn/ui on Radix with Tailwind, for both the dashboard and the widget. Chakra UI v3 was considered and rejected: it is fine for the dashboard, but the widget ships into third-party pages, where Chakra's provider, global reset and Emotion-injected styles cost 35-45KB gzipped and risk style bleed both ways. shadcn is copy-in components over about 10KB of shared deps, and Tailwind can be prefixed and scoped, so the widget renders inside a shadow root and the preview chat reuses the same components as the embedded one. The repo is one pnpm monorepo with `api`, `dashboard` and `widget` workspaces, plus a shared UI package, so the preview chat and the embedded widget render the same components. The API workspace runs Hono on Vercel functions, and the apps run React 19: Radix, react-markdown and lucide-react all support it, and the shadcn CLI emits 19-style components, so the `forwardRef` patching ai-frontend-advisor needs on React 18 does not apply here. Supabase Postgres with pgvector stores document chunks and embeddings, OpenAI `text-embedding-3-small` produces the vectors, and OpenAI `gpt-5.6-luna` writes the answers, the same model the advisor uses, so one `OPENAI_API_KEY` covers both (PLACEHOLDER until set in `.env`). Zod validates input on both sides. Host it on Vercel under a `bobdempsey83.com` subdomain, matching AI Storefront and AI Frontend Advisor. Write a spec first and tests before code, as in the owner's other projects. Spec work goes through OpenSpec: run `openspec init` in this repo and drive every change through an OpenSpec change proposal rather than hand-written spec files.
 
 ### What the admin user sees
 
@@ -22,6 +22,8 @@ The dashboard shows conversation logs, thumbs-up and thumbs-down ratings, and a 
 
 A chat bubble sits in the corner of the page. Answers stream in with numbered citations that link to the exact doc section. When retrieval confidence is low, the bot says so and offers a "talk to a human" button that collects an email address.
 
+The landing page is chat-first, copying ai-frontend-advisor's: a headline, a question box and a few starting prompts, with the live widget answering from the demo bot. The dashboard sits behind it rather than being the first thing a visitor meets.
+
 ### Recruiter-friendly demo requirements
 
 - There are no accounts and no login at all. The first request mints an anonymous session and a workspace of its own.
@@ -30,11 +32,11 @@ A chat bubble sits in the corner of the page. Answers stream in with numbered ci
   - A fictional SaaS help center: billing, refunds, password reset. The shape every visitor recognizes, and the product this app is built for.
   - A recipe collection: questions come naturally and the answers are obviously checkable.
   - A fictional employee handbook: PTO, expenses, remote work. Shows the tool in a second market.
-- Every set is fictional on purpose. Docs about real products let Claude answer from its own training data, and the demo would prove nothing about retrieval. Uploading is still offered, but no visitor has to upload anything to see the bot work.
+- Every set is fictional on purpose. Docs about real products let the model answer from its own training data, and the demo would prove nothing about retrieval. Uploading is still offered, but no visitor has to upload anything to see the bot work.
 - Session data is written to Postgres keyed by session id, never to a shared record, and is purged when the session expires. A visitor's edits are invisible to everyone else, and the app reopens seeded and clean. Nothing a visitor uploads is meant to outlive them, but it cannot live in memory either: Vercel functions keep no state between requests, so the rows are ephemeral rather than absent. The session id rides in an httpOnly cookie and the workspace lives 24 hours.
 - The landing page runs the live widget on itself, so a visitor can chat with the demo bot before logging in.
 - A Vercel cron job sweeps expired session workspaces, so abandoned data does not accumulate. The seed template itself is read-only, so one visitor can never break the demo for the next.
-- With no login, abuse control is the whole defense: Vercel Firewall rate-limits and bot-filters at the edge, and the API caps uploads, chat volume and documents per session to control Claude and embedding cost.
+- With no login, abuse control is the whole defense: Vercel Firewall rate-limits and bot-filters at the edge, and the API caps uploads, chat volume and documents per session to control answering and embedding cost.
 - Label all seeded content as fictional demo data.
 
 ### Done when
