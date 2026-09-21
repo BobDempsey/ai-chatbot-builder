@@ -1,38 +1,54 @@
 /**
- * Bundles the API into the one Vercel Function.
+ * Emits the API as a Vercel Function through the Build Output API.
  *
- * The first deploy failed on this: Vercel compiles each `api/*.ts` file on its
- * own and does not rewrite import specifiers, so a relative import reaching
- * into `apps/api/src` resolved to a path with no extension and the function
- * died with ERR_MODULE_NOT_FOUND before serving a request. Every import inside
- * `apps/api/src` is extensionless, which is ordinary TypeScript and not
- * something to rewrite for one deploy target.
+ * Two earlier shapes failed, and both failures are the reason for this one. A
+ * `api/[[...route]].ts` file was compiled per file rather than bundled, so its
+ * relative import into `apps/api/src` resolved to a path with no extension and
+ * the function died on ERR_MODULE_NOT_FOUND. Generating that file during the
+ * build instead did not help either: the `api/` directory is read from the
+ * committed source, so a file the build writes is never seen, and the
+ * deployment came back with no function at all.
  *
- * Bundling settles it. What lands in `api/` is a single file with no relative
- * imports left to resolve, and the workspace packages travel inside it rather
- * than through pnpm's symlinks, which the function's file tracing does not
- * follow either.
+ * The Build Output API has neither problem. The build writes the function
+ * itself, bundled, and Vercel serves what it finds in `.vercel/output`.
  *
  * Usage: node scripts/build-function.mjs (part of the Vercel build command)
  */
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { build } from 'esbuild';
 
-const outfile = 'api/[[...route]].js';
+const dir = '.vercel/output/functions/api.func';
+
+mkdirSync(dir, { recursive: true });
 
 await build({
   entryPoints: ['apps/api/src/vercel.ts'],
-  outfile,
+  outfile: `${dir}/index.js`,
   bundle: true,
   platform: 'node',
   format: 'esm',
   target: 'node22',
-  // Vercel reads this off the built file to pick the runtime. The name is
-  // deliberate: a bare `config` collides with a binding of that name inside
-  // the bundle, and the file fails to parse.
-  footer: {
-    js: ['const __vercelFunctionConfig = { runtime: "nodejs" };', 'export { __vercelFunctionConfig as config };'].join('\n'),
-  },
   logLevel: 'warning',
 });
 
-console.log(`bundled ${outfile}`);
+writeFileSync(
+  `${dir}/.vc-config.json`,
+  `${JSON.stringify(
+    {
+      runtime: 'nodejs22.x',
+      handler: 'index.js',
+      launcherType: 'Nodejs',
+      shouldAddHelpers: false,
+      // Without this the platform buffers the whole reply and the answer
+      // arrives in one piece, which is the one thing the chat must not do.
+      supportsResponseStreaming: true,
+    },
+    null,
+    2,
+  )}\n`,
+);
+
+// The bundle is ESM and nothing else in the directory declares what it is.
+writeFileSync(`${dir}/package.json`, `${JSON.stringify({ type: 'module' }, null, 2)}\n`);
+
+console.log(`bundled ${dir}/index.js`);

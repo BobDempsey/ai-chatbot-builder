@@ -1,15 +1,20 @@
 /**
- * The Hono app as a Vercel fetch handler.
+ * The API as a Node request listener, which is what the deployed function is.
  *
- * It lives in this workspace rather than beside the function file because
- * `hono/vercel` resolves here: pnpm links each package's dependencies into its
- * own `node_modules`, and `hono` belongs to `@acb/api`, not to the repo root.
- * The function at the root is a re-export for that reason alone.
+ * `getRequestListener` rather than `hono/vercel`: the function is emitted
+ * through the Build Output API with the Node launcher, and that launcher calls
+ * the default export as `(req, res)`. This also keeps streaming honest, since
+ * the listener writes to the response as tokens arrive rather than buffering
+ * an answer and sending it whole.
+ *
+ * It lives in this workspace rather than beside the build script because
+ * `@hono/node-server` resolves here: pnpm links each package's dependencies
+ * into its own `node_modules`, and that one belongs to `@acb/api`.
  */
-import { handle } from 'hono/vercel';
+import { getRequestListener } from '@hono/node-server';
 import { createProductionApi } from './production';
 
 /** Created once per instance, so a warm function reuses its database pool. */
 const api = createProductionApi();
 
-export default handle(api);
+export default getRequestListener(api.fetch);
