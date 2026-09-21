@@ -13,11 +13,12 @@
  */
 import { handoffRequestSchema } from '@acb/schemas';
 import { Hono } from 'hono';
-import { handleChat, type ChatDeps } from './routes/chat';
+import { type ChatDeps, handleChat } from './routes/chat';
+import { cronRoutes } from './routes/cron';
 import type { ApiDeps } from './routes/deps';
 import { documentRoutes } from './routes/documents';
 import { workspaceRoutes } from './routes/workspace';
-import { sessionMiddleware, type SessionStore } from './session';
+import { type SessionStore, sessionMiddleware } from './session';
 
 declare module 'hono' {
   interface ContextVariableMap {
@@ -48,7 +49,12 @@ function peekBotId(raw: string): string | null {
   }
 }
 
-export function createApi(deps: ApiDeps, sessions: SessionStore) {
+export interface ApiOptions {
+  /** Proves a request came from Vercel Cron. Without it the sweep refuses everything. */
+  cronSecret?: string;
+}
+
+export function createApi(deps: ApiDeps, sessions: SessionStore, options: ApiOptions = {}) {
   const chatDeps: ChatDeps = {
     store: deps.store,
     embeddings: deps.embeddings,
@@ -58,6 +64,10 @@ export function createApi(deps: ApiDeps, sessions: SessionStore) {
   };
 
   const api = new Hono();
+
+  // Above the session middleware: a sweep that minted a workspace of its own
+  // would undo half its work.
+  api.route('/', cronRoutes(sessions, options.cronSecret));
 
   api.options('/api/chat', (c) => c.body(null, 204, CORS_HEADERS));
 

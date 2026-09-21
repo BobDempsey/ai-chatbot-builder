@@ -29,6 +29,12 @@ export interface SessionStore {
    * inside it is filtered by the row-level policies.
    */
   withSession<T>(id: string, work: () => Promise<T>): Promise<T>;
+  /**
+   * Deletes every session whose time is up, and returns how many went. A
+   * workspace expires on read before this runs, so the sweep reclaims storage
+   * rather than enforcing anything.
+   */
+  sweepExpired(): Promise<number>;
 }
 
 declare module 'hono' {

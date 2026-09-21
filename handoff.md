@@ -1,10 +1,10 @@
 # Handoff: AI Chatbot Builder
 
-Updated 2026-09-17.
+Updated 2026-09-21. Earlier revisions: 2026-09-17.
 
 ## AI Chatbot Builder brief
 
-Build a new portfolio project in its own repo, named `ai-chatbot-builder` (the working folder is `Desktop/ai-chatbot-builder`; git is not initialized yet): a web app where a business uploads its docs and gets an embeddable AI support chatbot that answers from those docs with citations. It will be added to this site's portfolio, so recruiters are the main audience, and a recruiter must be able to try every feature in a few minutes without creating an account.
+Build a new portfolio project in its own repo, named `ai-chatbot-builder` (the working folder is `Desktop/ai-chatbot-builder`; the git repo is initialized and its branch is `master`, not `main`): a web app where a business uploads its docs and gets an embeddable AI support chatbot that answers from those docs with citations. It will be added to this site's portfolio, so recruiters are the main audience, and a recruiter must be able to try every feature in a few minutes without creating an account.
 
 ### Stack
 
@@ -61,21 +61,21 @@ Gotchas already paid for there: `trailingSlash: true` means posting to `/api/cha
 
 ### Building in parallel
 
-`docs/parallel-slices.md` records how work is split between agents: vertical slices cut along the spec's capability boundaries, each agent in its own git worktree, with the foundations landed on `main` as phase 0 first. It also names the traps the advisor build hit, including two worktrees competing for one dev port.
+`docs/parallel-slices.md` records how work is split between agents: vertical slices cut along the spec's capability boundaries, each agent in its own git worktree, with the foundations landed on the default branch as phase 0 first. It also names the traps the advisor build hit, including two worktrees competing for one dev port.
 
-The change's task list is now ordered that way. Phase 0 is three groups on `main`: the monorepo and toolchain, the shared contracts (Zod schemas, the `packages/ui` components and answer renderer, and a fake answer route that streams canned replies), and the database with RLS, session middleware and a Supabase branch per slice. Then three slices run in parallel:
+The change's task list is now ordered that way. Phase 0 is three groups on the default branch, `master` here: the monorepo and toolchain, the shared contracts (Zod schemas, the `packages/ui` components and answer renderer, and a fake answer route that streams canned replies), and the database with RLS, session middleware and a Supabase branch per slice. Then three slices run in parallel:
 
 - Slice A owns `apps/api`, the demo corpora and the eval: ingestion, seeding, retrieval, answers, citations and the caps.
 - Slice B owns `apps/dashboard`.
 - Slice C owns `apps/widget` and `apps/landing`.
 
-B and C build against the phase 0 fake route, so neither waits on A. Integration merges A, then B, then C on `main`, deletes the fake, and checks that the preview chat and the embedded widget answer identically. The rule that makes this work: a slice never writes a file another slice owns, and anything two slices need is phase 0 work.
+B and C build against the phase 0 fake route, so neither waits on A. Integration merges A, then B, then C on `master`, deletes the fake, and checks that the preview chat and the embedded widget answer identically. The rule that makes this work: a slice never writes a file another slice owns, and anything two slices need is phase 0 work.
 
 ### Supabase project
 
 `ai-chatbot-builder`, ref `qyxkspdsgllklsibgyvb`, us-east-2, in BobDempsey's org. Created 2026-09-17 at no monthly cost. The free tier allows two active projects and both slots were full, so `forged in filament` was paused to make room; it restores from the dashboard whenever it is wanted back.
 
-Five migrations are applied and kept in `supabase/migrations/`, so the schema is reproducible from the repo rather than only from the dashboard. They create pgvector, the eight session-keyed tables, row-level security, the HNSW index and `match_chunks`, and pin the search path on the two policy helpers after the Supabase linter flagged them.
+Six migrations are applied and kept in `supabase/migrations/`, so the schema is reproducible from the repo rather than only from the dashboard. They create pgvector, the eight session-keyed tables, row-level security, the HNSW index and `match_chunks`, pin the search path on the two policy helpers after the Supabase linter flagged them, and add the demo corpus template tables.
 
 Isolation was checked against real rows rather than assumed: under the `anon` role, session A saw its own two documents and none of session B's, `match_chunks` returned only A's ready chunks in distance order and skipped a document still indexing, a query with no `request.acb_session` claim saw nothing at all, and an expired session became unreachable before any sweep ran. Probe rows were deleted afterwards. The security advisor reports no findings.
 
@@ -92,3 +92,47 @@ Two things only showed up once it ran against the real project. Sessions existed
 The floor is now measured rather than guessed: answerable questions land between 0.35 and 0.51, off-subject ones at 0.66 and above, so 0.62 sits between them.
 
 `pnpm --filter @acb/api eval` asks all 31 fixture questions against the live model and currently passes every one. It spends credit, so run it by hand, never in CI.
+
+~~The fake route itself is gone, but two files still name it: `apps/landing/vite.config.ts` proxies `/api` to port 5180 in development, and a comment in `apps/landing/src/app.tsx` says the bot id is the one the fake answers for.~~ **Fixed 2026-09-21.** The proxy was already right, because the real API took over the fake's port. The bot id was not: the landing page opened the widget on the fake's hardcoded id and every question came back "That chatbot could not be found." The page now fetches `/api/bot` on mount and re-creates the widget on the `publicId` that call returns, since each session is seeded with a bot of its own and no id can be compiled in. A question typed before that call lands is re-sent afterwards rather than dropped. `DEMO_BOT_ID` survives as the placeholder the widget mounts on first paint and the id the tests assert against.
+
+Outstanding work is task 8.1 and 9.1 to 9.5 in `openspec/changes/add-rag-chatbot-mvp/tasks.md`: the Vercel Firewall rules, the cron expiry sweep, expiry enforced on read, the fictional-data labels, then the deploy, the README and the portfolio entry. `README.md` and `vercel.json` both exist now and are described below.
+
+### Running it locally, 2026-09-21
+
+`pnpm dev:api` serves on 5180 and the three Vite apps pin their own ports: dashboard 5181, widget 5182, landing 5183. Each app proxies `/api` to 5180, overridable with `ACB_API`. Started against the real `.env` the API reports `store: postgres, model: openai`, which is the deployment running locally and spends credit on every question asked.
+
+Two dev servers from an abandoned agent worktree were still holding 5182 and 5183 when this session started, so the landing page on 5183 was the worktree's copy rather than the repo's and edits appeared to do nothing. Check what a port is actually serving before debugging the page on it: `netstat -ano | findstr :5183`, then match the PID's command line. The worktrees live under `.claude/worktrees/` and are gitignored.
+
+`Open the dashboard` on the landing page links to `/dashboard`, which nothing serves. In development the dashboard is its own app on 5181, and Vite answers `/dashboard` with the landing's own `index.html`, so the link looks alive and reloads the same page. The deploy has to rewrite `/dashboard` to the dashboard build, which is part of task 9.1 and the reason `vercel.json` cannot be a copy of the advisor's.
+
+### The sweep and the labels, 2026-09-21
+
+`GET /api/cron/sweep` deletes every session whose `expires_at` has passed and answers `{ swept: n }`. It is mounted above the session middleware, because a sweep that minted a workspace of its own would replace the row it had just deleted. One delete does the whole job: every session-keyed table references `sessions` with `on delete cascade`, and the template tables carry no session id, so the read-only seed template is never touched. It runs as the connection role rather than under a claim, since a claim names one session and the sweep reaches all the dead ones.
+
+Vercel Cron proves itself with `Authorization: Bearer $CRON_SECRET`, so that header is the whole gate. `CRON_SECRET` is named in `.env.example` and is PLACEHOLDER until set. With no secret configured the route refuses every request rather than running open: a deployment that forgets the variable loses its sweep, which is a storage bill, where an unauthenticated delete would lose workspaces. The schedule entry now sits in `vercel.json`: `0 4 * * *`, once a day, which is all the free plan allows.
+
+Expiry on read and the fictional-data labels were already built and are now ticked rather than implemented again. `find` filters on `expires_at > now()` and every policy calls `session_is_live`, so an expired workspace is unreachable before any sweep runs, which the session tests cover from the middleware down. The label sits on every seeded document's reference, on each option in the dashboard's set picker, and as a badge on seeded rows in the document list, with tests over all three corpora.
+
+### The deploy shape, 2026-09-21
+
+`vercel.json` builds every workspace, checks the embed entry is still under 4 KB gzipped, then runs `scripts/build-vercel.mjs` to assemble one `dist/` from the three front-end builds. The layout is decided by the embed tag: a customer pastes `<script src="https://host/embed.js">`, so the widget's output goes to the site root and the dashboard moves under `/dashboard/` instead. Each app still builds to its own `apps/*/dist` and the assembly copies, because the size check reads `apps/widget/dist/embed.js` and per-app previews still work.
+
+The dashboard's Vite config carries `base: '/dashboard/'`, without which every asset URL would point at the root and load the landing page. That applies in development too: `pnpm dev:dashboard` now serves at `http://localhost:5181/dashboard/` rather than at the root. Two rewrites send `/dashboard` and anything under it to `dist/dashboard/index.html`, which is what makes the landing page's `Open the dashboard` link work in production. It still does not work in development, where the two are separate servers.
+
+`api/[[...route]].ts` is the one function. The optional catch-all matters: `api/index.ts` would answer `/api` and 404 `/api/chat`. It re-exports a handler from `apps/api/src/vercel.ts`, because `hono/vercel` resolves inside the workspace that depends on Hono and not at the repo root, which is pnpm's layout rather than a quirk. `createProductionApi` reads the environment through the guard and throws on anything missing, the opposite of `dev-real.ts`, which degrades: a function answering with fake clients would look like it worked.
+
+`SUPABASE_DB_URL` is now required by the env guard. It was always what the API queried through, and the guard checking the other three but not that one would have let a deployment boot and fail at its first query.
+
+Nothing is read from disk at request time, so `includeFiles` stays empty. The corpora are indexed into template rows by `pnpm --filter @acb/api templates:load` before a deploy, and seeding copies those rows. `trailingSlash` is false, so the advisor's 308 trap does not apply here, and the client posts to `/api/chat` with no slash.
+
+Set `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` and `CRON_SECRET` as Sensitive environment variables in the Vercel project before the first deploy. All five are PLACEHOLDER there until then.
+
+### The README, 2026-09-21
+
+`README.md` covers what a visitor can try, the five stages of the pipeline with the real numbers (900 character chunks, 150 of overlap, 1536 dimensions, six nearest chunks, the 0.62 floor), how row-level security isolates a session, the caps, how to run it locally and how it deploys. The one thing it cannot carry yet is the live link, which reads "not deployed yet" until the Vercel project is up. Task 9.4 stays open for that line alone.
+
+### The Vercel account, checked 2026-09-21
+
+The Vercel MCP is connected and authenticated as `bobdempsey`, team `team_jqLK1IhQBH8oIYVE11zPHSGO`, on the **hobby** plan with one concurrent build. The CLI is not installed and the repo has no `.vercel` link and no git remote, so the first deploy either pushes to GitHub and creates a git-linked project, or uploads files through `create_deployment` without a remote.
+
+Two things about the plan bear on the plan. Hobby allows one cron run a day, which the `0 4 * * *` sweep already matches, so nothing has to change there. Firewall rate-limiting rules are a paid feature, which puts task 8.1 in doubt: confirm what the plan actually allows before promising edge rate limits, and remember the API's own caps (20 questions per ten minutes, 10 documents, 5 MB uploads) already run server-side and do not depend on the firewall.

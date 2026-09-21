@@ -12,6 +12,12 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string().trim().min(1),
   SUPABASE_URL: z.url(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().trim().min(1),
+  /**
+   * The connection the API actually queries through. It is separate from the
+   * service role key on purpose: the key would bypass the row-level policies,
+   * and the policies are the whole isolation model.
+   */
+  SUPABASE_DB_URL: z.string().trim().min(1),
 });
 
 export type Env = z.infer<typeof envSchema>;

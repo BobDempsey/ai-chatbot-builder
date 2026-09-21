@@ -95,9 +95,9 @@ Owns `apps/widget` and `apps/landing`. Builds against the phase 0 fake route unt
 ## 8. Limits and cleanup (on `main`)
 
 - [ ] 8.1 Configure Vercel Firewall rate limits and bot filtering on the chat, upload and URL-fetch routes, record the rule in the handoff since it lives in the dashboard not the repo, and verify a burst is rejected at the edge while human-paced use is not
-- [ ] 8.2 Implement the daily sweep as a Vercel cron route deleting expired workspaces, and verify expired data is gone and live sessions are untouched
-- [ ] 8.3 Enforce expiry on read as well, and verify an expired session is unreachable before the sweep runs
-- [ ] 8.4 Label every seeded document and the set picker as fictional demo data, and verify the label appears on each corpus
+- [x] 8.2 Implement the daily sweep as a Vercel cron route deleting expired workspaces, and verify expired data is gone and live sessions are untouched
+- [x] 8.3 Enforce expiry on read as well, and verify an expired session is unreachable before the sweep runs
+- [x] 8.4 Label every seeded document and the set picker as fictional demo data, and verify the label appears on each corpus
 
 ## 9. Ship
 

@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 /**
- * `/api` goes to the phase 0 fake on 5180 in development. Slices B and C never
- * point at a real API until integration replaces the fake.
+ * `/api` goes to the API on 5180, overridable with `ACB_API`.
  *
  * The build emits `embed.js` and one lazily imported chat chunk beside it,
  * rather than a page, because what ships is a script tag on somebody else's

@@ -14,11 +14,13 @@
 import { DEMO_DATA_LABEL } from '@acb/schemas';
 import { Button, Card, Textarea } from '@acb/ui';
 import { askWidget, createWidget, type WidgetOptions } from '@acb/widget';
-import { type FormEvent, type KeyboardEvent, useEffect, useState } from 'react';
+import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 /**
- * The demo bot every visitor talks to. Integration swaps this for the public id
- * of the seeded demo bot; until then it is the id the phase 0 fake answers for.
+ * The id the page opens with before the session answers. Every visitor gets
+ * their own seeded bot, so the real public id arrives from `/api/bot` a moment
+ * after the page does; this stands in until then, and stays the id the tests
+ * mount against.
  */
 export const DEMO_BOT_ID = '00000000-0000-4000-8000-000000000041';
 
@@ -31,17 +33,43 @@ export interface LandingProps {
   loadChat?: WidgetOptions['loadChat'];
 }
 
-export function Landing({ botId = DEMO_BOT_ID, loadChat }: LandingProps) {
+export function Landing({ botId, loadChat }: LandingProps) {
   const [draft, setDraft] = useState('');
+  const [liveBotId, setLiveBotId] = useState(botId ?? DEMO_BOT_ID);
+  /** Re-sent when the real id lands mid-question, so nothing typed is dropped. */
+  const lastQuestion = useRef('');
+  const mountedId = useRef<string | null>(null);
+
+  // A caller that names a bot means it: only the unattended page asks the
+  // session which bot it was seeded with.
+  useEffect(() => {
+    if (botId) return;
+    let live = true;
+    fetch('/api/bot')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((bot) => {
+        if (live && typeof bot?.publicId === 'string') setLiveBotId(bot.publicId);
+      })
+      .catch(() => {
+        // The bubble still opens and the chat reports the failure itself.
+      });
+    return () => {
+      live = false;
+    };
+  }, [botId]);
 
   useEffect(() => {
-    const widget = createWidget({ botId, loadChat });
+    const remounting = mountedId.current !== null && mountedId.current !== liveBotId;
+    mountedId.current = liveBotId;
+    const widget = createWidget({ botId: liveBotId, loadChat });
+    if (remounting && lastQuestion.current) askWidget(lastQuestion.current);
     return () => widget.destroy();
-  }, [botId, loadChat]);
+  }, [liveBotId, loadChat]);
 
   const ask = (question: string) => {
     const trimmed = question.trim();
     if (!trimmed) return;
+    lastQuestion.current = trimmed;
     askWidget(trimmed);
     setDraft('');
   };

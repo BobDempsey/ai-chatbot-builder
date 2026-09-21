@@ -14,8 +14,9 @@
  *
  * With both set it is the deployment, running locally.
  */
-import { config } from 'dotenv';
+
 import { serve } from '@hono/node-server';
+import { config } from 'dotenv';
 import { createApi } from './app';
 import { extractPdfText, fetchUrlText } from './ingest/sources';
 import { createOpenAiAnswerModel } from './models/answer';
@@ -53,6 +54,7 @@ const api = createApi(
     },
   },
   sessions,
+  { ...(process.env.CRON_SECRET ? { cronSecret: process.env.CRON_SECRET } : {}) },
 );
 
 const port = Number(process.env.PORT ?? 5180);

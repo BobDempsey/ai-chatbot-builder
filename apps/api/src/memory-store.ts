@@ -52,6 +52,18 @@ export class MemoryStore implements SessionStore {
     }
   }
 
+  async sweepExpired(): Promise<number> {
+    const dead = [...this.sessions.values()].filter((session) => session.expiresAt.getTime() <= this.now());
+    for (const session of dead) {
+      this.sessions.delete(session.id);
+      // The rows go with the session, as the foreign keys do in Postgres.
+      for (let i = this.rows.length - 1; i >= 0; i -= 1) {
+        if (this.rows[i]?.sessionId === session.id) this.rows.splice(i, 1);
+      }
+    }
+    return dead.length;
+  }
+
   /** What the current claim can see. No claim, or an expired one, sees nothing. */
   visible(kind?: Row['kind']): Row[] {
     if (!this.claim) return [];

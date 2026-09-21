@@ -107,6 +107,28 @@ describe('the page leads with the chat', () => {
   });
 });
 
+describe('the bot the page talks to', () => {
+  it('mounts the chat on the public id the session was seeded with', async () => {
+    const seeded = { ...BOT, publicId: id(42) };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json(seeded)),
+    );
+    const mountChat = vi.fn<MountChat>(() => () => {});
+    render(<Landing loadChat={async () => ({ mountChat })} />);
+
+    // The question is asked against the placeholder and re-sent against the
+    // real id, so a visitor who types immediately still gets an answer.
+    fireEvent.click(screen.getByRole('button', { name: PROMPTS[0] as string }));
+
+    await waitFor(() => {
+      const ids = mountChat.mock.calls.map((call) => call[0]?.botId);
+      expect(ids).toContain(seeded.publicId);
+    });
+    expect(mountChat.mock.calls.at(-1)?.[0]).toMatchObject({ botId: seeded.publicId, question: PROMPTS[0] });
+  });
+});
+
 describe('the embedded widget on the page', () => {
   it('answers the demo bot with citations, with no dashboard visit first', async () => {
     serve();

@@ -10,7 +10,7 @@
  * the difference matters more than it looks: the policies read the `sessions`
  * table, so the row has to exist before a workspace can be seeded.
  */
-import { DEFAULT_CORPUS, SESSION_TTL_MS, type Corpus } from '@acb/schemas';
+import { type Corpus, DEFAULT_CORPUS, SESSION_TTL_MS } from '@acb/schemas';
 import type { Sql } from 'postgres';
 import type { SessionRecord, SessionStore } from '../session';
 import type { WorkspaceStore } from './store';
@@ -46,6 +46,12 @@ export class MemorySessionStore implements SessionStore {
   /** No claim to set without a database, so the work simply runs. */
   async withSession<T>(_id: string, work: () => Promise<T>): Promise<T> {
     return work();
+  }
+
+  async sweepExpired(): Promise<number> {
+    const dead = [...this.sessions.values()].filter((session) => session.expiresAt.getTime() <= this.now());
+    for (const session of dead) this.sessions.delete(session.id);
+    return dead.length;
   }
 
   /** Used by the expiry tests to age a session out without waiting a day. */
@@ -101,5 +107,19 @@ export class PostgresSessionStore implements SessionStore {
    */
   async withSession<T>(_id: string, work: () => Promise<T>): Promise<T> {
     return work();
+  }
+
+  /**
+   * One delete does the whole job: every session-keyed table references
+   * `sessions` with `on delete cascade`, so the bots, documents, chunks,
+   * conversations, messages, ratings and unanswered questions go with the row.
+   *
+   * It runs as the connection role rather than under a claim, because a claim
+   * names one session and this reaches all the dead ones. The template tables
+   * carry no session id and are untouched.
+   */
+  async sweepExpired(): Promise<number> {
+    const rows = await this.sql<{ id: string }[]>`delete from sessions where expires_at <= now() returning id`;
+    return rows.length;
   }
 }

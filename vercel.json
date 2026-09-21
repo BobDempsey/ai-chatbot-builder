@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm build && node scripts/check-embed-size.mjs && node scripts/build-vercel.mjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "outputDirectory": "dist",
+  "trailingSlash": false,
+  "framework": null,
+  "crons": [{ "path": "/api/cron/sweep", "schedule": "0 4 * * *" }],
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard/index.html" },
+    { "source": "/dashboard/:path*", "destination": "/dashboard/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/embed.js",
+      "headers": [
+        { "key": "access-control-allow-origin", "value": "*" },
+        { "key": "cache-control", "value": "public, max-age=300, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/chat-:hash.js",
+      "headers": [
+        { "key": "access-control-allow-origin", "value": "*" },
+        { "key": "cache-control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ const FULL_ENV = {
   OPENAI_API_KEY: 'sk-test',
   SUPABASE_URL: 'https://example.supabase.co',
   SUPABASE_SERVICE_ROLE_KEY: 'service-role',
+  SUPABASE_DB_URL: 'postgres://user:pass@host:5432/postgres',
 };
 
 describe('env guard', () => {
@@ -25,7 +26,7 @@ describe('env guard', () => {
     }
     expect(thrown).toBeInstanceOf(MissingEnvError);
     const error = thrown as MissingEnvError;
-    expect(error.missing).toEqual(['SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_URL']);
+    expect(error.missing).toEqual(['SUPABASE_DB_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_URL']);
     expect(error.message).toContain('.env.example');
     expect(error.message).not.toContain('sk-test');
   });
