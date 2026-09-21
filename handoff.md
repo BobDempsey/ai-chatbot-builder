@@ -136,3 +136,11 @@ Set `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_
 The Vercel MCP is connected and authenticated as `bobdempsey`, team `team_jqLK1IhQBH8oIYVE11zPHSGO`, on the **hobby** plan with one concurrent build. The CLI is not installed and the repo has no `.vercel` link and no git remote, so the first deploy either pushes to GitHub and creates a git-linked project, or uploads files through `create_deployment` without a remote.
 
 Two things about the plan bear on the plan. Hobby allows one cron run a day, which the `0 4 * * *` sweep already matches, so nothing has to change there. Firewall rate-limiting rules are a paid feature, which puts task 8.1 in doubt: confirm what the plan actually allows before promising edge rate limits, and remember the API's own caps (20 questions per ten minutes, 10 documents, 5 MB uploads) already run server-side and do not depend on the firewall.
+
+### GitHub and Vercel, set up 2026-09-21
+
+The repo is public at `https://github.com/BobDempsey/ai-chatbot-builder`, pushed from `master`, which is also the Vercel production branch. The Vercel project is `ai-chatbot-builder`, id `prj_Elgx2YgzOUruxGJEcnRChvU1a4NM`, linked to that repo in team `team_jqLK1IhQBH8oIYVE11zPHSGO`.
+
+All five variables are set as Sensitive for production, preview and development: `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` and `CRON_SECRET`. The cron secret was generated for this project and written to the local `.env` as well, so the sweep can be called by hand against a dev server.
+
+No deployment has run yet. The project was created with `deploy: false` so the variables could be set first, and the push to `master` happened before the project existed, so nothing triggered a build. The next push to `master` deploys, or a deployment can be created from the current commit.

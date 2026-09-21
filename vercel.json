@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build && node scripts/check-embed-size.mjs && node scripts/build-vercel.mjs",
+  "buildCommand": "node scripts/build-function.mjs && pnpm build && node scripts/check-embed-size.mjs && node scripts/build-vercel.mjs",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "dist",
   "trailingSlash": false,
