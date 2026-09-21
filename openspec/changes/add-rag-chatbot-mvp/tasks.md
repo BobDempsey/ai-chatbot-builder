@@ -101,8 +101,8 @@ Owns `apps/widget` and `apps/landing`. Builds against the phase 0 fake route unt
 
 ## 9. Ship
 
-- [ ] 9.1 Deploy to the Vercel subdomain with migrations applied and `OPENAI_API_KEY` plus the Supabase keys set as Sensitive, list any runtime-read file under `includeFiles`, and verify the deployed app answers a seeded question end to end
-- [ ] 9.2 Confirm the client posts to the trailing-slash path if `trailingSlash` is on, and verify no request takes a 308 before reaching the function
-- [ ] 9.3 Run the full flow on the deployed site as a first-time visitor with no account, and verify seeding, upload, answer with citations, rating and the widget all work
-- [ ] 9.4 Write the README linking the live site and explaining the RAG pipeline, and verify a reader can follow it from upload to citation
+- [x] 9.1 Deploy to the Vercel subdomain with migrations applied and `OPENAI_API_KEY` plus the Supabase keys set as Sensitive, list any runtime-read file under `includeFiles`, and verify the deployed app answers a seeded question end to end
+- [x] 9.2 Confirm the client posts to the trailing-slash path if `trailingSlash` is on, and verify no request takes a 308 before reaching the function
+- [x] 9.3 Run the full flow on the deployed site as a first-time visitor with no account, and verify seeding, upload, answer with citations, rating and the widget all work
+- [x] 9.4 Write the README linking the live site and explaining the RAG pipeline, and verify a reader can follow it from upload to citation
 - [ ] 9.5 Add the project to `content/portfolio/`, `resumeProjects` in `app/utils/portfolio-data.ts`, and the GitHub profile README, leading with the AI feature per `docs/resume-spec.md`

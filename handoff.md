@@ -144,3 +144,21 @@ The repo is public at `https://github.com/BobDempsey/ai-chatbot-builder`, pushed
 All five variables are set as Sensitive for production, preview and development: `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` and `CRON_SECRET`. The cron secret was generated for this project and written to the local `.env` as well, so the sweep can be called by hand against a dev server.
 
 No deployment has run yet. The project was created with `deploy: false` so the variables could be set first, and the push to `master` happened before the project existed, so nothing triggered a build. The next push to `master` deploys, or a deployment can be created from the current commit.
+
+### Live, verified 2026-09-21
+
+`https://ai-chatbot-builder-pi.vercel.app` is the production deployment. It took three builds, and the two failures are worth keeping.
+
+The first put the function at `api/[[...route]].ts`. Vercel compiled each `api/*.ts` file on its own without rewriting import specifiers, so the relative import into `apps/api/src` resolved to a path with no extension and the process exited on ERR_MODULE_NOT_FOUND before serving anything. Every import inside `apps/api/src` is extensionless, which is ordinary TypeScript and not worth rewriting for one deploy target.
+
+The second bundled that file during the build. It built cleanly and served no function at all: the `api/` directory is read from the committed source, so a file the build writes into it is never seen.
+
+The third works and is the shape to keep. `scripts/build-function.mjs` writes `.vercel/output/functions/api.func` itself, esbuild-bundled, and `scripts/build-vercel.mjs` writes `static/` and the `config.json` routing table beside it. Nothing generated is committed. Two details there are load-bearing: the handler is a Node request listener from `@hono/node-server` rather than `hono/vercel`, because the Node launcher calls the default export as `(req, res)`; and the function declares `supportsResponseStreaming`, without which the platform buffers the whole reply and the answer arrives in one piece.
+
+The full no-account flow was walked against the live site with curl. A first request mints a session and seeds it, the document list comes back labelled fictional demo data, "How do refunds work?" streams token by token and ends with citations naming the document and section, "what wine goes with fish pie" declines and offers a human, a rating sticks and shows up in the summary, the conversation log and the gap list both fill, a cross-origin request carrying only the public bot id is answered, and `/api/cron/sweep` without the bearer secret is refused with 401.
+
+One thing the brief asked for is missing. A new workspace is seeded with a bot and the three document sets, but with no past conversations, ratings or analytics, so those three dashboard screens are empty until the visitor asks something. The brief wanted every screen to have data on first view.
+
+`0 4 * * *` is the cron, and the hobby plan allows one run a day, so it fits. Task 8.1 is still open and may not be possible on this plan: Firewall rate-limiting rules are a paid feature. The server-side caps do not depend on it.
+
+The site is still on its `.vercel.app` name. Attaching a `bobdempsey83.com` subdomain is the last deploy step.
