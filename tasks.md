@@ -1,6 +1,7 @@
 # Remaining tasks
 
-- [ ] Settle the abuse controls the hobby plan allows
+- [x] Add the edge rate limit on API writes
+- [ ] Decide on bot protection for the API
 - [ ] Enable Vercel Web Analytics
 - [ ] Add dark mode
 - [ ] Add how-it-works content and screenshots to the landing page
