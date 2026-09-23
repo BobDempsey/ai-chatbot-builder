@@ -134,7 +134,7 @@ describe('seeding', () => {
 
     const conversations = (await (await visitor.request('/api/conversations')).json()) as { conversations: unknown[] };
     expect(conversations.conversations.length).toBeGreaterThan(0);
-    expect(await (await visitor.request('/api/ratings')).json()).toMatchObject({ up: 1 });
+    expect(await (await visitor.request('/api/ratings')).json()).toMatchObject({ up: 3, down: 1 });
     const unanswered = (await (await visitor.request('/api/unanswered')).json()) as { questions: unknown[] };
     expect(unanswered.questions.length).toBeGreaterThan(0);
   });
@@ -558,7 +558,8 @@ describe('the record', () => {
     const message = log.conversations.flatMap((conversation) => conversation.messages).find((m) => m.id === done.messageId);
     expect(message?.citations.length).toBeGreaterThan(0);
     expect(message?.rating).toBe('down');
-    expect(await (await visitor.request('/api/ratings')).json()).toMatchObject({ down: 1 });
+    // One seeded down vote, plus this one.
+    expect(await (await visitor.request('/api/ratings')).json()).toMatchObject({ down: 2 });
   });
 
   it('refuses to rate a message belonging to another session', async () => {

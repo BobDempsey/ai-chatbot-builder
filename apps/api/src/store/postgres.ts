@@ -35,6 +35,7 @@ import type {
   UnansweredQuestion,
 } from '@acb/schemas';
 import postgres, { type Sql, type TransactionSql } from 'postgres';
+import { HOUR_MS, MESSAGE_GAP_MS, resolveCitations, SEED_HISTORY, type SeededSource } from '../seed-history';
 import type {
   BotRecord,
   ChunkRow,
@@ -122,8 +123,63 @@ export class PostgresWorkspaceStore implements WorkspaceStore {
         values (${sessionId}, 'Northwind Support', '#2563eb',
                 'Hi. Ask me anything about the docs I have been given.', 'friendly', ${corpus})
         returning id`;
-      if (bot) await tx`select seed_corpus(${bot.id}::uuid, ${corpus}::corpus)`;
+      if (!bot) return;
+      await tx`select seed_corpus(${bot.id}::uuid, ${corpus}::corpus)`;
+      await this.seedHistory(tx, sessionId, bot.id, corpus);
     });
+  }
+
+  /**
+   * Writes the set's past conversations, ratings and unanswered questions in
+   * the seeding transaction, so a workspace never exists half seeded. The
+   * policies still apply: every row carries the session the claim names.
+   */
+  private async seedHistory(tx: TransactionSql, sessionId: string, botId: string, corpus: Corpus): Promise<void> {
+    const rows = await tx<{ document_id: string; title: string; chunk_id: string; section: string }[]>`
+      select d.id as document_id, d.title, c.id as chunk_id, c.section
+      from documents d join chunks c on c.document_id = d.id
+      where d.seeded
+      order by d.title, c.ordinal`;
+    const sources = new Map<string, SeededSource>();
+    for (const row of rows) {
+      const source = sources.get(row.document_id) ?? { documentId: row.document_id, documentTitle: row.title, chunks: [] };
+      source.chunks.push({ chunkId: row.chunk_id, section: row.section });
+      sources.set(row.document_id, source);
+    }
+    const history = SEED_HISTORY[corpus];
+    const now = Date.now();
+
+    for (const conversation of history.conversations) {
+      const startedAt = now - conversation.hoursAgo * HOUR_MS;
+      const [created] = await tx<{ id: string }[]>`
+        insert into conversations (session_id, bot_id, surface, started_at)
+        values (${sessionId}, ${botId}, ${conversation.surface}::chat_surface, ${new Date(startedAt)})
+        returning id`;
+      if (!created) throw new Error('the seeded conversation was not recorded');
+      for (const [turn, exchange] of conversation.exchanges.entries()) {
+        const asked = startedAt + turn * 2 * MESSAGE_GAP_MS;
+        const citations = resolveCitations(exchange.cites, [...sources.values()]);
+        await tx`
+          insert into messages (session_id, conversation_id, role, content, created_at)
+          values (${sessionId}, ${created.id}, 'user', ${exchange.question}, ${new Date(asked)})`;
+        const [answer] = await tx<{ id: string }[]>`
+          insert into messages (session_id, conversation_id, role, content, citations, created_at)
+          values (${sessionId}, ${created.id}, 'assistant', ${exchange.answer},
+                  ${JSON.stringify(citations)}::jsonb, ${new Date(asked + MESSAGE_GAP_MS)})
+          returning id`;
+        if (answer && exchange.rating) {
+          await tx`
+            insert into ratings (session_id, message_id, value)
+            values (${sessionId}, ${answer.id}, ${exchange.rating}::rating)`;
+        }
+      }
+    }
+
+    for (const gap of history.unanswered) {
+      await tx`
+        insert into unanswered_questions (session_id, bot_id, question, email, asked_at)
+        values (${sessionId}, ${botId}, ${gap.question}, ${gap.email ?? null}, ${new Date(now - gap.hoursAgo * HOUR_MS)})`;
+    }
   }
 
   async getBot(sessionId: string): Promise<BotRecord | null> {

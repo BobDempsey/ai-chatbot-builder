@@ -11,19 +11,10 @@
  * Template rows sit outside any session and are never written by a session,
  * which is what makes the demo corpora read-only.
  */
-import {
-  DEMO_DATA_LABEL,
-  type BotSettings,
-  type Citation,
-  type Conversation,
-  type Corpus,
-  type Doc,
-  type Rating,
-  type RatingSummary,
-  type UnansweredQuestion,
-} from '@acb/schemas';
+import type { BotSettings, Citation, Conversation, Corpus, Doc, Rating, RatingSummary, UnansweredQuestion } from '@acb/schemas';
 import { DEFAULT_BOT_SETTINGS } from '@acb/schemas';
 import { cosineDistance } from '../retrieval/distance';
+import { HOUR_MS, MESSAGE_GAP_MS, resolveCitations, SEED_HISTORY, type SeededSource } from '../seed-history';
 import type {
   BotRecord,
   ChunkRow,
@@ -87,45 +78,58 @@ export class MemoryWorkspaceStore implements WorkspaceStore {
     if (this.bots.has(sessionId)) return;
     this.bots.set(sessionId, { ...DEFAULT_BOT_SETTINGS, id: uuid(), publicId: uuid(), corpus });
     this.copyTemplate(sessionId, corpus);
-    this.seedHistory(sessionId);
+    this.seedHistory(sessionId, corpus);
   }
 
-  /** A seeded workspace opens with one past exchange and a rating on it, so no screen is empty. */
-  private seedHistory(sessionId: string): void {
-    const conversationId = uuid();
-    this.conversations.push({ id: conversationId, sessionId, surface: 'widget', startedAt: this.stamp(-3_600_000) });
-    const first = this.documents.find((doc) => doc.sessionId === sessionId);
-    const chunk = this.chunks.find((c) => c.documentId === first?.id);
-    const citations: Citation[] =
-      first && chunk
-        ? [{ index: 1, documentId: first.id, documentTitle: first.title, section: chunk.section, chunkId: chunk.id }]
-        : [];
-    this.messages.push({
-      id: uuid(),
-      sessionId,
-      conversationId,
-      role: 'user',
-      content: 'What is in these documents?',
-      citations: [],
-      createdAt: this.stamp(-3_600_000),
-    });
-    const answerId = uuid();
-    this.messages.push({
-      id: answerId,
-      sessionId,
-      conversationId,
-      role: 'assistant',
-      content: `This workspace is seeded with ${DEMO_DATA_LABEL.toLowerCase()} you can ask about. [1]`,
-      citations,
-      createdAt: this.stamp(-3_599_000),
-    });
-    this.ratings.set(answerId, { sessionId, value: 'up' });
-    this.unanswered.push({
-      id: uuid(),
-      sessionId,
-      question: 'Do you support single sign-on?',
-      askedAt: this.stamp(-1_800_000),
-    });
+  /** A seeded workspace opens with the set's past conversations, ratings and gaps, so no screen is empty. */
+  private seedHistory(sessionId: string, corpus: Corpus): void {
+    const sources: SeededSource[] = this.documents
+      .filter((doc) => doc.sessionId === sessionId && doc.seeded)
+      .map((doc) => ({
+        documentId: doc.id,
+        documentTitle: doc.title,
+        chunks: this.chunks.filter((c) => c.documentId === doc.id).map((c) => ({ chunkId: c.id, section: c.section })),
+      }));
+    const history = SEED_HISTORY[corpus];
+
+    for (const conversation of history.conversations) {
+      const conversationId = uuid();
+      const startedAt = -conversation.hoursAgo * HOUR_MS;
+      this.conversations.push({ id: conversationId, sessionId, surface: conversation.surface, startedAt: this.stamp(startedAt) });
+      conversation.exchanges.forEach((exchange, turn) => {
+        const asked = startedAt + turn * 2 * MESSAGE_GAP_MS;
+        this.messages.push({
+          id: uuid(),
+          sessionId,
+          conversationId,
+          role: 'user',
+          content: exchange.question,
+          citations: [],
+          createdAt: this.stamp(asked),
+        });
+        const answerId = uuid();
+        this.messages.push({
+          id: answerId,
+          sessionId,
+          conversationId,
+          role: 'assistant',
+          content: exchange.answer,
+          citations: resolveCitations(exchange.cites, sources),
+          createdAt: this.stamp(asked + MESSAGE_GAP_MS),
+        });
+        if (exchange.rating) this.ratings.set(answerId, { sessionId, value: exchange.rating });
+      });
+    }
+
+    for (const gap of history.unanswered) {
+      this.unanswered.push({
+        id: uuid(),
+        sessionId,
+        question: gap.question,
+        askedAt: this.stamp(-gap.hoursAgo * HOUR_MS),
+        ...(gap.email ? { email: gap.email } : {}),
+      });
+    }
   }
 
   private copyTemplate(sessionId: string, corpus: Corpus): void {
