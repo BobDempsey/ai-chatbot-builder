@@ -1,6 +1,6 @@
 # Handoff: AI Chatbot Builder
 
-Updated 2026-09-21. Earlier revisions: 2026-09-17.
+Updated 2026-09-23. Earlier revisions: 2026-09-21, 2026-09-17.
 
 ## AI Chatbot Builder brief
 
@@ -115,17 +115,17 @@ Expiry on read and the fictional-data labels were already built and are now tick
 
 ### The deploy shape, 2026-09-21
 
-`vercel.json` builds every workspace, checks the embed entry is still under 4 KB gzipped, then runs `scripts/build-vercel.mjs` to assemble one `dist/` from the three front-end builds. The layout is decided by the embed tag: a customer pastes `<script src="https://host/embed.js">`, so the widget's output goes to the site root and the dashboard moves under `/dashboard/` instead. Each app still builds to its own `apps/*/dist` and the assembly copies, because the size check reads `apps/widget/dist/embed.js` and per-app previews still work.
+`vercel.json` builds every workspace, checks the embed entry is still under 4 KB gzipped, then runs `scripts/build-function.mjs` and `scripts/build-vercel.mjs`, which write `.vercel/output` between them. ~~It assembles one `dist/`~~ **Changed 2026-09-21**, see "Live, verified" below: the output goes through the Build Output API instead, so `vercel.json` carries the two commands and nothing else, and the routing table lives in the `config.json` that build writes. The layout is decided by the embed tag: a customer pastes `<script src="https://host/embed.js">`, so the widget's output goes to the site root and the dashboard moves under `/dashboard/` instead. Each app still builds to its own `apps/*/dist` and the assembly copies, because the size check reads `apps/widget/dist/embed.js` and per-app previews still work.
 
-The dashboard's Vite config carries `base: '/dashboard/'`, without which every asset URL would point at the root and load the landing page. That applies in development too: `pnpm dev:dashboard` now serves at `http://localhost:5181/dashboard/` rather than at the root. Two rewrites send `/dashboard` and anything under it to `dist/dashboard/index.html`, which is what makes the landing page's `Open the dashboard` link work in production. It still does not work in development, where the two are separate servers.
+The dashboard's Vite config carries `base: '/dashboard/'`, without which every asset URL would point at the root and load the landing page. That applies in development too: `pnpm dev:dashboard` now serves at `http://localhost:5181/dashboard/` rather than at the root. A route below the filesystem handler sends `/dashboard` and anything under it to `static/dashboard/index.html`, which is what makes the landing page's `Open the dashboard` link work in production. It sits below that handler so it cannot swallow a real asset under `/dashboard/assets`. It still does not work in development, where the two are separate servers.
 
-`api/[[...route]].ts` is the one function. The optional catch-all matters: `api/index.ts` would answer `/api` and 404 `/api/chat`. It re-exports a handler from `apps/api/src/vercel.ts`, because `hono/vercel` resolves inside the workspace that depends on Hono and not at the repo root, which is pnpm's layout rather than a quirk. `createProductionApi` reads the environment through the guard and throws on anything missing, the opposite of `dev-real.ts`, which degrades: a function answering with fake clients would look like it worked.
+~~`api/[[...route]].ts` is the one function, re-exporting a handler from `apps/api/src/vercel.ts`.~~ **Replaced 2026-09-21.** There is no `api/` directory now; the function is written into `.vercel/output/functions/api.func` by the build, and a route above it sends `/api` and everything under it there. `createProductionApi` reads the environment through the guard and throws on anything missing, the opposite of `dev-real.ts`, which degrades: a function answering with fake clients would look like it worked.
 
 `SUPABASE_DB_URL` is now required by the env guard. It was always what the API queried through, and the guard checking the other three but not that one would have let a deployment boot and fail at its first query.
 
-Nothing is read from disk at request time, so `includeFiles` stays empty. The corpora are indexed into template rows by `pnpm --filter @acb/api templates:load` before a deploy, and seeding copies those rows. `trailingSlash` is false, so the advisor's 308 trap does not apply here, and the client posts to `/api/chat` with no slash.
+Nothing is read from disk at request time, so nothing has to be carried alongside the function. The corpora are indexed into template rows by `pnpm --filter @acb/api templates:load` before a deploy, and seeding copies those rows. `trailingSlash` is false, so the advisor's 308 trap does not apply here, and the client posts to `/api/chat` with no slash.
 
-Set `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` and `CRON_SECRET` as Sensitive environment variables in the Vercel project before the first deploy. All five are PLACEHOLDER there until then.
+~~Set the five variables as Sensitive in the Vercel project before the first deploy.~~ **Done 2026-09-21**, see "GitHub and Vercel" below. All five are SET.
 
 ### The README, 2026-09-21
 
@@ -162,3 +162,11 @@ One thing the brief asked for is missing. A new workspace is seeded with a bot a
 `0 4 * * *` is the cron, and the hobby plan allows one run a day, so it fits. Task 8.1 is still open and may not be possible on this plan: Firewall rate-limiting rules are a paid feature. The server-side caps do not depend on it.
 
 The site is still on its `.vercel.app` name. Attaching a `bobdempsey83.com` subdomain is the last deploy step.
+
+### Working with the owner
+
+He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.
+
+Two kinds of action in this session needed his say-so before they would run, both refused by the harness rather than by him: `git restore` over files, and creating the Vercel deployment. Expect the same for anything destructive or outward-facing, and ask in one line rather than working around it.
+
+One habit worth keeping: `biome check --write` over a whole directory re-sorts imports across files the session never touched, and the repo's `pnpm lint` does not enforce that ordering. Scope the formatter to the files you changed, or the diff stops being readable.
