@@ -9,7 +9,7 @@
  */
 import { type BotSettings, botSettingsSchema, type Tone, toneSchema } from '@acb/schemas';
 import { Button, Card, Input, Textarea } from '@acb/ui';
-import { useEffect, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { ApiError } from './api';
 
 export interface SettingsPanelProps {
@@ -38,10 +38,15 @@ export function SettingsPanel({ settings, onSave }: SettingsPanelProps) {
   };
 
   // A corpus swap or a reload replaces the saved bot, and the draft follows it
-  // unless the reader is midway through an edit the server rejected.
-  useEffect(() => {
+  // unless the reader is midway through an edit the server rejected. This is
+  // adjusted during render rather than in an effect: a mount effect that is
+  // still pending when the reader types runs after the keystroke and throws the
+  // edit away, which a slow first render in CI made visible.
+  const [synced, setSynced] = useState(settings);
+  if (synced !== settings) {
+    setSynced(settings);
     setDraft(settings);
-  }, [settings]);
+  }
 
   const field = <K extends keyof BotSettings>(key: K, value: BotSettings[K]) => {
     setDraft((current) => ({ ...current, [key]: value }));
