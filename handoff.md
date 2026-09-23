@@ -169,6 +169,14 @@ CI failed three runs in a row on the dashboard test "rejects a malformed color",
 
 Local Node is 24 and CI pins 22. To reproduce a CI-only failure, run `npx -y -p node@22 node ../../node_modules/vitest/vitest.mjs run` inside the app's folder.
 
+### The firewall rule, 2026-09-23
+
+The hobby plan allows one WAF rate-limit rule and three custom rules per project. The one rule, "Rate limit API writes per IP", matches `POST` with a path starting `/api/` and allows 20 per IP per 60 seconds (fixed window), answering 429 before the function runs. It covers chat, uploads, the corpus swap, ratings and the handoff, and it bounds cost even when a visitor drops the session cookie to reset the per-session caps (20 questions per ten minutes, 10 documents). GET routes, including the one that mints and seeds a session, are not limited at the edge. Verified live: 25 empty POSTs to `/api/rate` returned twenty 400s, then five 429s. Testing by hand more than 20 POSTs a minute from one IP will hit it.
+
+The rule lives in Vercel, not the repo. Change it with the Vercel CLI, which is logged in as `bobdempsey`, the way the advisor's rule was made: `npx vercel@latest firewall rules list --expand --project ai-chatbot-builder --scope bobdempseys-projects`, then `firewall rules edit "<name>" ... --yes` and `firewall publish --yes`. The Vercel MCP's firewall tools answer 404 "Seawall Config not found" for this project even with a rule published, so don't use them. The first version, typed into the dashboard, matched a literal `/api/*` and limited nothing; `rules list --expand` is what showed it.
+
+Bot Protection is Off, AI Bots is Allow and BotID is Basic. Challenging bots on `/api` is not settled: a challenge page cannot be solved by the widget's `fetch` from a customer's page, so it could break the embed. That is the rest of task 8.1.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.
