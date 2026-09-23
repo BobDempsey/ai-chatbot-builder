@@ -175,7 +175,7 @@ The hobby plan allows one WAF rate-limit rule and three custom rules per project
 
 The rule lives in Vercel, not the repo. Change it with the Vercel CLI, which is logged in as `bobdempsey`, the way the advisor's rule was made: `npx vercel@latest firewall rules list --expand --project ai-chatbot-builder --scope bobdempseys-projects`, then `firewall rules edit "<name>" ... --yes` and `firewall publish --yes`. The Vercel MCP's firewall tools answer 404 "Seawall Config not found" for this project even with a rule published, so don't use them. The first version, typed into the dashboard, matched a literal `/api/*` and limited nothing; `rules list --expand` is what showed it.
 
-Bot Protection is Off, AI Bots is Allow and BotID is Basic. Challenging bots on `/api` is not settled: a challenge page cannot be solved by the widget's `fetch` from a customer's page, so it could break the embed. That is the rest of task 8.1.
+Bot Protection is set to Log (published 2026-09-23), AI Bots is Allow and BotID is Basic. Challenge was rejected on purpose: a challenge page cannot be solved by the widget's `fetch` from a customer's page, so it would break the embed, and the rate limit already bounds what a bot can spend. Log records bot traffic without blocking it. Viewing unknown bot traffic needs Observability Plus, which this plan lacks. After the change `/` and `/api/bot` still answered 200.
 
 ### Working with the owner
 
