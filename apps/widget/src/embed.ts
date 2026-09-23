@@ -17,7 +17,7 @@
  * `data-acb-api` overrides where requests go; without it they go to the origin
  * that served this script.
  */
-import { BOT_ID_ATTRIBUTE } from '@acb/schemas/embed';
+import { BOT_ID_ATTRIBUTE, THEME_ATTRIBUTE } from '@acb/schemas/embed';
 import { adoptStyles } from './adopt-styles';
 import { ASK_EVENT, askWidget, questionOf } from './ask-event';
 import { BUBBLE_CSS, createBubbleButton } from './bubble';
@@ -55,6 +55,18 @@ export function createWidget(options: WidgetOptions): WidgetHandle {
   const host = document.createElement('div');
   host.setAttribute('data-acb-widget', '');
   container.append(host);
+
+  // The dark tokens inside the shadow root key on this attribute, copied from
+  // the host page's <html>. Only this project's own pages set it, through the
+  // theme toggle, so a customer's page keeps a light widget.
+  const syncTheme = () => {
+    const theme = document.documentElement.getAttribute(THEME_ATTRIBUTE);
+    if (theme) host.setAttribute(THEME_ATTRIBUTE, theme);
+    else host.removeAttribute(THEME_ATTRIBUTE);
+  };
+  syncTheme();
+  const themeObserver = new MutationObserver(syncTheme);
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: [THEME_ATTRIBUTE] });
 
   const shadow = host.attachShadow({ mode: 'open' });
   adoptStyles(shadow, BUBBLE_CSS);
@@ -116,6 +128,7 @@ export function createWidget(options: WidgetOptions): WidgetHandle {
     requested: () => requested,
     destroy: () => {
       window.removeEventListener(ASK_EVENT, onAsk);
+      themeObserver.disconnect();
       unmount?.();
       host.remove();
     },

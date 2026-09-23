@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AI Chatbot Builder</title>
+    <!-- THEME_SCRIPT from @acb/ui, before first paint so a dark choice never flashes light. A test keeps it in sync. -->
+    <script>try{document.documentElement.setAttribute('data-acb-theme',localStorage.getItem('acb-theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-acb-theme','light')}</script>
     <meta name="description" content="Upload your docs and get a chat bubble for your site that answers from them with citations." />
   </head>
   <body>

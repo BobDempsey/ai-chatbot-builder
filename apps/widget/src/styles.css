@@ -5,18 +5,17 @@
 
 /*
  * The shared sheet puts its dark tokens on `:root`, and a shadow tree has no
- * `:root`, so inside the widget they never match and the panel stays light.
- * Restating them on `:host`, under the `--acb-` names the prefixed utilities
- * read, is the smallest fix that does not change a file
- * phase 0 froze. Media queries are evaluated against the document, so the host
- * page's `prefers-color-scheme` is what decides.
+ * `:root`, so inside the widget they never match. They are restated here on
+ * `:host`, under the `--acb-` names the prefixed utilities read, keyed on the
+ * `data-acb-theme` attribute `embed.ts` mirrors from the host page's `<html>`.
+ * On this project's own pages that follows the theme toggle. On a customer's
+ * page, which never sets it, the widget stays light.
  */
-@media (prefers-color-scheme: dark) {
-  :host {
-    --acb-color-surface: #16181d;
-    --acb-color-surface-muted: #1f222a;
-    --acb-color-ink: #f3f4f6;
-    --acb-color-ink-muted: #a3a9b6;
-    --acb-color-line: #2c3038;
-  }
+:host([data-acb-theme='dark']) {
+  color-scheme: dark;
+  --acb-color-surface: #16181d;
+  --acb-color-surface-muted: #1f222a;
+  --acb-color-ink: #f3f4f6;
+  --acb-color-ink-muted: #a3a9b6;
+  --acb-color-line: #2c3038;
 }

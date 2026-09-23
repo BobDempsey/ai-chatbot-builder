@@ -12,7 +12,7 @@
  * page gets.
  */
 import { DEMO_DATA_LABEL } from '@acb/schemas';
-import { Button, Card, Textarea } from '@acb/ui';
+import { Button, Card, Textarea, ThemeToggle } from '@acb/ui';
 import { askWidget, createWidget, type WidgetOptions } from '@acb/widget';
 import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
@@ -88,7 +88,10 @@ export function Landing({ botId, loadChat }: LandingProps) {
 
   return (
     <div className="acb:min-h-screen acb:bg-surface acb:text-ink">
-      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-8 acb:px-4 acb:py-16 acb:sm:py-24">
+      <div className="acb:flex acb:justify-end acb:px-4 acb:pt-4">
+        <ThemeToggle />
+      </div>
+      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-8 acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
         <header className="acb:space-y-3">
           <h1 className="acb:text-3xl acb:font-semibold acb:text-ink acb:sm:text-4xl">Your docs, answering for themselves.</h1>
           <p className="acb:text-base acb:text-ink-muted">

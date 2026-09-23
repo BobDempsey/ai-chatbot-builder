@@ -144,3 +144,22 @@ describe('a question handed in by the page', () => {
     expect(mountChat.mock.calls[0]?.[0]).toMatchObject({ question: 'How do refunds work?' });
   });
 });
+
+describe('the theme', () => {
+  afterEach(() => document.documentElement.removeAttribute('data-acb-theme'));
+
+  it('stays light on a page that never sets one', () => {
+    widget = createWidget({ botId: BOT_ID, loadChat: fakeChatModule().load });
+    expect(widget.host.hasAttribute('data-acb-theme')).toBe(false);
+  });
+
+  it("follows this project's toggle on the host page's <html>", async () => {
+    document.documentElement.setAttribute('data-acb-theme', 'dark');
+    widget = createWidget({ botId: BOT_ID, loadChat: fakeChatModule().load });
+    expect(widget.host.getAttribute('data-acb-theme')).toBe('dark');
+
+    document.documentElement.setAttribute('data-acb-theme', 'light');
+    await Promise.resolve();
+    expect(widget.host.getAttribute('data-acb-theme')).toBe('light');
+  });
+});

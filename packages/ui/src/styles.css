@@ -27,9 +27,10 @@
 }
 
 /*
- * Dark tokens follow the host page when it says so, and the system otherwise.
- * The widget reads the host's `prefers-color-scheme`, since it cannot see the
- * host's own theme class.
+ * Dark tokens apply when `data-acb-theme="dark"` is on `<html>`, which only the
+ * theme toggle sets (see `theme-toggle.tsx`). There is no system option: a
+ * page without the attribute is light. The widget carries its own copy of
+ * these on `:host`, keyed on the attribute it mirrors from the host page.
  *
  * `prefix(acb)` renames every theme variable, so the utilities read
  * `--acb-color-surface`, not the `--color-surface` written in `@theme` above.
@@ -38,21 +39,7 @@
  * an unprefixed one.
  */
 :root {
-  color-scheme: light dark;
-}
-
-:root[data-acb-theme='light'] {
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-acb-theme='light']) {
-    --acb-color-surface: #16181d;
-    --acb-color-surface-muted: #1f222a;
-    --acb-color-ink: #f3f4f6;
-    --acb-color-ink-muted: #a3a9b6;
-    --acb-color-line: #2c3038;
-  }
 }
 
 :root[data-acb-theme='dark'] {

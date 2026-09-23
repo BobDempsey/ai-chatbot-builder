@@ -21,7 +21,7 @@ import {
   type RatingSummary,
   type UnansweredQuestion,
 } from '@acb/schemas';
-import { themeStyle } from '@acb/ui';
+import { ThemeToggle, themeStyle } from '@acb/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
 import { ConversationsPanel } from './conversations-panel';
@@ -114,9 +114,12 @@ export function App() {
 
   return (
     <main style={themeStyle(bot)} className="acb:mx-auto acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
-      <header>
-        <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
-        <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
+      <header className="acb:flex acb:items-start acb:justify-between acb:gap-4">
+        <div>
+          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
+          <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <div className="acb:grid acb:gap-6 acb:lg:grid-cols-2">

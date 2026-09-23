@@ -16,6 +16,13 @@
 /** The attribute carrying the bot's public id. It grants asking questions only. */
 export const BOT_ID_ATTRIBUTE = 'data-acb-bot';
 
+/**
+ * `light` or `dark`, on `<html>`. This project's own pages set it from the
+ * theme toggle, and the widget copies it onto its shadow host. A customer's
+ * page never sets it, so the widget there stays light.
+ */
+export const THEME_ATTRIBUTE = 'data-acb-theme';
+
 /** Optional: overrides where the widget sends requests. Defaults to the page's origin. */
 export const API_ORIGIN_ATTRIBUTE = 'data-acb-api';
 
