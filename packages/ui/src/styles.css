@@ -30,21 +30,36 @@
  * Dark tokens follow the host page when it says so, and the system otherwise.
  * The widget reads the host's `prefers-color-scheme`, since it cannot see the
  * host's own theme class.
+ *
+ * `prefix(acb)` renames every theme variable, so the utilities read
+ * `--acb-color-surface`, not the `--color-surface` written in `@theme` above.
+ * Anything that overrides a token at runtime has to use the prefixed name, or
+ * it sets a variable nothing reads. `scripts/check-css.mjs` fails the build on
+ * an unprefixed one.
  */
+:root {
+  color-scheme: light dark;
+}
+
+:root[data-acb-theme='light'] {
+  color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-acb-theme='light']) {
-    --color-surface: #16181d;
-    --color-surface-muted: #1f222a;
-    --color-ink: #f3f4f6;
-    --color-ink-muted: #a3a9b6;
-    --color-line: #2c3038;
+    --acb-color-surface: #16181d;
+    --acb-color-surface-muted: #1f222a;
+    --acb-color-ink: #f3f4f6;
+    --acb-color-ink-muted: #a3a9b6;
+    --acb-color-line: #2c3038;
   }
 }
 
 :root[data-acb-theme='dark'] {
-  --color-surface: #16181d;
-  --color-surface-muted: #1f222a;
-  --color-ink: #f3f4f6;
-  --color-ink-muted: #a3a9b6;
-  --color-line: #2c3038;
+  color-scheme: dark;
+  --acb-color-surface: #16181d;
+  --acb-color-surface-muted: #1f222a;
+  --acb-color-ink: #f3f4f6;
+  --acb-color-ink-muted: #a3a9b6;
+  --acb-color-line: #2c3038;
 }

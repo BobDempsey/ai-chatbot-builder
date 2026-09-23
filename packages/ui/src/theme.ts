@@ -19,7 +19,7 @@ export function readableInk(hex: string): '#ffffff' | '#16181d' {
 
 export function themeStyle(settings: Pick<BotSettings, 'accentColor'>): CSSProperties {
   return {
-    ['--color-accent' as string]: settings.accentColor,
-    ['--color-accent-ink' as string]: readableInk(settings.accentColor),
+    ['--acb-color-accent' as string]: settings.accentColor,
+    ['--acb-color-accent-ink' as string]: readableInk(settings.accentColor),
   };
 }

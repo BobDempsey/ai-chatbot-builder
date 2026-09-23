@@ -7,7 +7,8 @@
 @layer base {
   body {
     margin: 0;
-    background: var(--color-surface);
+    background: var(--acb-color-surface);
+    color: var(--acb-color-ink);
     font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
 }

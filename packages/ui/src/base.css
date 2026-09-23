@@ -23,7 +23,7 @@
     box-sizing: border-box;
     border-width: 0;
     border-style: solid;
-    border-color: var(--color-line);
+    border-color: var(--acb-color-line);
     /*
      * Tailwind writes `border-style: var(--tw-border-style)` and registers the
      * initial value with `@property`. A registration only counts from a

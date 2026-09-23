@@ -50,6 +50,15 @@ for (const app of APPS) {
       console.error(`${app}/${file}: ${unprefixed.length} unprefixed class selectors, first: ${[...new Set(unprefixed)].slice(0, 5)}`);
       failures += 1;
     }
+
+    // The utilities read `--acb-color-*`. A `--color-*` in the output is an
+    // override nothing reads, which is how dark mode and the bot accent once
+    // silently did nothing.
+    const deadTokens = [...css.matchAll(/--(color|radius)-[\w-]+/g)].map((m) => m[0]);
+    if (deadTokens.length > 0) {
+      console.error(`${app}/${file}: unprefixed theme variables nothing reads: ${[...new Set(deadTokens)].slice(0, 5)}`);
+      failures += 1;
+    }
   }
 }
 

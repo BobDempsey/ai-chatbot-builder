@@ -6,16 +6,17 @@
 /*
  * The shared sheet puts its dark tokens on `:root`, and a shadow tree has no
  * `:root`, so inside the widget they never match and the panel stays light.
- * Restating them on `:host` is the smallest fix that does not change a file
+ * Restating them on `:host`, under the `--acb-` names the prefixed utilities
+ * read, is the smallest fix that does not change a file
  * phase 0 froze. Media queries are evaluated against the document, so the host
  * page's `prefers-color-scheme` is what decides.
  */
 @media (prefers-color-scheme: dark) {
   :host {
-    --color-surface: #16181d;
-    --color-surface-muted: #1f222a;
-    --color-ink: #f3f4f6;
-    --color-ink-muted: #a3a9b6;
-    --color-line: #2c3038;
+    --acb-color-surface: #16181d;
+    --acb-color-surface-muted: #1f222a;
+    --acb-color-ink: #f3f4f6;
+    --acb-color-ink-muted: #a3a9b6;
+    --acb-color-line: #2c3038;
   }
 }

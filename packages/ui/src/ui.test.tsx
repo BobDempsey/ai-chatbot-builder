@@ -158,8 +158,8 @@ describe('theming', () => {
         <Button>Send</Button>
       </div>,
     );
-    expect((light.firstChild as HTMLElement).style.getPropertyValue('--color-accent')).toBe('#2563eb');
-    expect((warm.firstChild as HTMLElement).style.getPropertyValue('--color-accent')).toBe('#facc15');
+    expect((light.firstChild as HTMLElement).style.getPropertyValue('--acb-color-accent')).toBe('#2563eb');
+    expect((warm.firstChild as HTMLElement).style.getPropertyValue('--acb-color-accent')).toBe('#facc15');
   });
 
   it('picks ink a reader can see against the accent', () => {
