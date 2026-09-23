@@ -181,6 +181,12 @@ Bot Protection is set to Log (published 2026-09-23), AI Bots is Allow and BotID 
 
 `@vercel/analytics` mounts `<Analytics />` in the landing and dashboard entries (`main.tsx`), outside `App`, so the tests never load it. The widget does not carry it: it runs on customers' pages, and their visitors are not this project's to count. The owner enabled Web Analytics on the project by hand, because `vercel project web-analytics enable` needs an interactive confirmation an agent cannot give. Verified on the live landing page: `/_vercel/insights/script.js` loads and `/_vercel/insights/view` answers 200.
 
+### Dark mode, 2026-09-23
+
+The dark tokens were written from the start and never applied. `prefix(acb)` in `packages/ui/src/styles.css` renames every theme variable, so the utilities read `--acb-color-surface`, while the dark blocks, the widget's `:host` overrides, `base.css` and `themeStyle` all set `--color-*`. The same mistake meant a bot's saved accent color never reached the page; every bot rendered in the default blue. All runtime overrides now use the `--acb-` names, and `scripts/check-css.mjs` fails CI if an unprefixed `--color-` or `--radius-` variable ships again. Names inside `@theme` stay unprefixed, because Tailwind adds the prefix on output.
+
+Dark mode follows `prefers-color-scheme`; there is no toggle. `data-acb-theme="light"` or `"dark"` on `<html>` forces one, and both documents set `color-scheme` so native controls follow. The widget follows the host page's system preference, since it cannot see the host's theme. Checked in dark on the live landing page, and locally in the dashboard and the open widget. One known weak spot: link text in the accent color (`Open the dashboard`) is `#2563eb` on `#16181d`, about 3.3:1, under the 4.5:1 body-text bar, and the axe tests run only in light.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.
