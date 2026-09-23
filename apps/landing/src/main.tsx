@@ -3,6 +3,7 @@
  * created by the page itself, so this file stays the same whether the demo bot
  * comes from the fake route or the real one.
  */
+import { Analytics } from '@vercel/analytics/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Landing } from './app';
@@ -13,6 +14,7 @@ if (root) {
   createRoot(root).render(
     <StrictMode>
       <Landing />
+      <Analytics />
     </StrictMode>,
   );
 }

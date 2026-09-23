@@ -2,6 +2,7 @@
  * Slice B's entry. It mounts `App` and nothing else, so the whole dashboard can
  * be rendered in a test without a DOM the browser built first.
  */
+import { Analytics } from '@vercel/analytics/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app';
@@ -12,6 +13,7 @@ if (root) {
   createRoot(root).render(
     <StrictMode>
       <App />
+      <Analytics />
     </StrictMode>,
   );
 }
