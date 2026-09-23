@@ -177,6 +177,10 @@ The rule lives in Vercel, not the repo. Change it with the Vercel CLI, which is 
 
 Bot Protection is set to Log (published 2026-09-23), AI Bots is Allow and BotID is Basic. Challenge was rejected on purpose: a challenge page cannot be solved by the widget's `fetch` from a customer's page, so it would break the embed, and the rate limit already bounds what a bot can spend. Log records bot traffic without blocking it. Viewing unknown bot traffic needs Observability Plus, which this plan lacks. After the change `/` and `/api/bot` still answered 200.
 
+### Web Analytics, 2026-09-23
+
+`@vercel/analytics` mounts `<Analytics />` in the landing and dashboard entries (`main.tsx`), outside `App`, so the tests never load it. The widget does not carry it: it runs on customers' pages, and their visitors are not this project's to count. The owner enabled Web Analytics on the project by hand, because `vercel project web-analytics enable` needs an interactive confirmation an agent cannot give. Verified on the live landing page: `/_vercel/insights/script.js` loads and `/_vercel/insights/view` answers 200.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.
