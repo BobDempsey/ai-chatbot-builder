@@ -18,9 +18,9 @@
  * the transaction, and the service role key would bypass the policies entirely,
  * which would move isolation back into application code.
  *
- * This implementation has not been exercised against the live project: there
- * are no credentials in this environment yet. The schema it targets is the one
- * in `supabase/migrations/`, and the in-memory store is what the tests run.
+ * `postgres.integration.test.ts` runs it in CI against a Supabase Postgres
+ * container with `supabase/migrations/` applied. The route tests use the
+ * in-memory store instead.
  */
 import type {
   BotSettings,

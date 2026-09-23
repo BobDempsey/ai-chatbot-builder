@@ -12,6 +12,20 @@ jobs:
   check:
     name: typecheck, lint, test, build
     runs-on: ubuntu-latest
+    # A throwaway Supabase Postgres, so the Postgres store is tested against
+    # the real migrations and policies rather than only the in-memory copy.
+    services:
+      postgres:
+        image: supabase/postgres:17.6.1.175
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -h localhost"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -23,9 +37,15 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm format:check
-      # No key and no database: every test drives injected fakes, so nothing
-      # here calls a provider or spends credit.
+      - name: apply the migrations to the test database
+        env:
+          PGPASSWORD: postgres
+        run: for f in supabase/migrations/*.sql; do psql -v ON_ERROR_STOP=1 -h localhost -U postgres -d postgres -f "$f"; done
+      # No key: every test drives injected fakes, so nothing here calls a
+      # provider or spends credit. The database is the container above.
       - run: pnpm test
+        env:
+          ACB_TEST_DB_URL: postgres://postgres:postgres@localhost:5432/postgres
       - run: pnpm build
       # The widget lands on pages nobody here controls, so an unprefixed class
       # is a defect in someone else's site.
