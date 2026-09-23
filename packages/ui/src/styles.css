@@ -38,6 +38,9 @@
  * it sets a variable nothing reads. `scripts/check-css.mjs` fails the build on
  * an unprefixed one.
  */
+/* `acb:dark:` follows the toggle's attribute, not the system scheme. */
+@custom-variant dark (&:where([data-acb-theme='dark'], [data-acb-theme='dark'] *));
+
 :root {
   color-scheme: light;
 }

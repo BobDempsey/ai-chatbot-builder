@@ -7,11 +7,14 @@
  * widget and the shared answer renderer all agreeing, inside the same shadow
  * root a customer's page would get.
  */
+
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import type { ChatEvent } from '@acb/schemas';
 import type { MountChat } from '@acb/widget';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEMO_BOT_ID, Landing, PROMPTS } from './app';
+import { DEMO_BOT_ID, Landing, PROMPTS, STEPS } from './app';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
@@ -150,5 +153,20 @@ describe('the embedded widget on the page', () => {
     // the page has become a dashboard.
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('link', { name: 'Open the dashboard' })).toBeTruthy();
+  });
+});
+
+describe('how it works', () => {
+  it('lists the steps in order and shows a screenshot for each theme that exists', () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+
+    const steps = screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent);
+    expect(steps).toEqual(STEPS.map((step) => step.title));
+
+    const sources = [...document.querySelectorAll('img')].map((image) => image.getAttribute('src') ?? '');
+    expect(sources).toHaveLength(4);
+    for (const source of sources) {
+      expect(existsSync(join(import.meta.dirname, '..', 'public', source))).toBe(true);
+    }
   });
 });

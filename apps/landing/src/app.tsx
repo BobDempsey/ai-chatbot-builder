@@ -12,7 +12,7 @@
  * page gets.
  */
 import { DEMO_DATA_LABEL } from '@acb/schemas';
-import { Button, Card, Textarea, ThemeToggle } from '@acb/ui';
+import { Button, Card, cn, Textarea, ThemeToggle } from '@acb/ui';
 import { askWidget, createWidget, type WidgetOptions } from '@acb/widget';
 import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
@@ -23,6 +23,26 @@ import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 
  * mount against.
  */
 export const DEMO_BOT_ID = '00000000-0000-4000-8000-000000000041';
+
+/** The four steps a business goes through, in the order the dashboard offers them. */
+export const STEPS = [
+  {
+    title: 'Add your docs',
+    body: 'Upload PDFs, paste Markdown or point at help-center pages. A progress bar shows each one being split into sections and indexed.',
+  },
+  {
+    title: 'Make it yours',
+    body: 'Set the name, accent color, greeting and tone, and try questions in the preview chat beside the settings.',
+  },
+  {
+    title: 'Paste one line',
+    body: 'Copy the script tag onto any site. The bubble costs about 2 KB, and the chat downloads only when a visitor reaches for it.',
+  },
+  {
+    title: 'Read what people asked',
+    body: 'Conversation logs, thumbs up and down, and a list of questions the bot could not answer, which is the list of docs to write next.',
+  },
+];
 
 /** Questions the seeded SaaS help center actually covers, so the first answer lands. */
 export const PROMPTS = ['How do refunds work?', 'How do I change my plan?', 'Can I cancel partway through a year?'];
@@ -134,6 +154,49 @@ export function Landing({ botId, loadChat }: LandingProps) {
           </div>
         </Card>
 
+        <section aria-labelledby="how-it-works" className="acb:space-y-4">
+          <h2 id="how-it-works" className="acb:text-lg acb:font-semibold acb:text-ink">
+            How it works
+          </h2>
+          <ol className="acb:grid acb:gap-4 acb:sm:grid-cols-2">
+            {STEPS.map((step, index) => (
+              <li key={step.title} className="acb:flex acb:gap-3">
+                <span
+                  aria-hidden="true"
+                  className="acb:flex acb:h-7 acb:w-7 acb:shrink-0 acb:items-center acb:justify-center acb:rounded-full acb:bg-accent acb:text-sm acb:font-semibold acb:text-accent-ink"
+                >
+                  {index + 1}
+                </span>
+                <div className="acb:space-y-1">
+                  <h3 className="acb:text-sm acb:font-semibold acb:text-ink">{step.title}</h3>
+                  <p className="acb:text-sm acb:text-ink-muted">{step.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section aria-labelledby="screens" className="acb:space-y-4">
+          <h2 id="screens" className="acb:text-lg acb:font-semibold acb:text-ink">
+            What you get
+          </h2>
+          <Screenshot
+            name="dashboard"
+            width={1280}
+            height={800}
+            alt="The dashboard: bot settings, a preview chat, the seeded documents, ratings, conversations and unanswered questions."
+            caption="The dashboard every visitor gets, seeded with a bot, documents and history."
+          />
+          <Screenshot
+            name="widget"
+            width={384}
+            height={747}
+            alt="The chat widget answering how refunds work, with two numbered sources naming the document and section."
+            caption="The widget on a page, answering with numbered sources."
+            className="acb:mx-auto acb:max-w-xs"
+          />
+        </section>
+
         <section className="acb:space-y-2">
           <h2 className="acb:text-lg acb:font-semibold acb:text-ink">What happens behind the answer</h2>
           <p className="acb:text-sm acb:text-ink-muted">
@@ -153,5 +216,44 @@ export function Landing({ botId, loadChat }: LandingProps) {
         </section>
       </main>
     </div>
+  );
+}
+
+interface ScreenshotProps {
+  name: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+  className?: string;
+}
+
+/**
+ * One screenshot in the theme the page is in. Both are in the markup and CSS
+ * shows one, keyed on the toggle's attribute, so switching needs no re-render.
+ * The images were taken from the live site at 1280 by 800.
+ */
+function Screenshot({ name, width, height, alt, caption, className }: ScreenshotProps) {
+  const image = 'acb:h-auto acb:w-full acb:rounded-panel acb:border acb:border-line';
+  return (
+    <figure className={cn('acb:space-y-2', className)}>
+      <img
+        src={`/screens/${name}-light.webp`}
+        width={width}
+        height={height}
+        alt={alt}
+        loading="lazy"
+        className={`${image} acb:dark:hidden`}
+      />
+      <img
+        src={`/screens/${name}-dark.webp`}
+        width={width}
+        height={height}
+        alt={alt}
+        loading="lazy"
+        className={`${image} acb:hidden acb:dark:block`}
+      />
+      <figcaption className="acb:text-xs acb:text-ink-muted">{caption}</figcaption>
+    </figure>
   );
 }
