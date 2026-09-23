@@ -34,7 +34,7 @@ import type {
   RatingSummary,
   UnansweredQuestion,
 } from '@acb/schemas';
-import postgres, { type Sql, type TransactionSql } from 'postgres';
+import postgres, { type JSONValue, type Sql, type TransactionSql } from 'postgres';
 import { HOUR_MS, MESSAGE_GAP_MS, resolveCitations, SEED_HISTORY, type SeededSource } from '../seed-history';
 import type {
   BotRecord,
@@ -165,7 +165,7 @@ export class PostgresWorkspaceStore implements WorkspaceStore {
         const [answer] = await tx<{ id: string }[]>`
           insert into messages (session_id, conversation_id, role, content, citations, created_at)
           values (${sessionId}, ${created.id}, 'assistant', ${exchange.answer},
-                  ${JSON.stringify(citations)}::jsonb, ${new Date(asked + MESSAGE_GAP_MS)})
+                  ${tx.json(citations as unknown as JSONValue)}, ${new Date(asked + MESSAGE_GAP_MS)})
           returning id`;
         if (answer && exchange.rating) {
           await tx`
@@ -332,7 +332,7 @@ export class PostgresWorkspaceStore implements WorkspaceStore {
         values (${sessionId}, ${conversationId}, 'user', ${exchange.question})`;
       const [answer] = await tx<{ id: string }[]>`
         insert into messages (session_id, conversation_id, role, content, citations)
-        values (${sessionId}, ${conversationId}, 'assistant', ${exchange.answer}, ${JSON.stringify(exchange.citations)}::jsonb)
+        values (${sessionId}, ${conversationId}, 'assistant', ${exchange.answer}, ${tx.json(exchange.citations as unknown as JSONValue)})
         returning id`;
       if (!answer) throw new Error('the answer was not recorded');
       return { conversationId, messageId: answer.id };
