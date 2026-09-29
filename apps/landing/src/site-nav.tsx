@@ -1,6 +1,7 @@
 /**
  * The bar at the top of the landing page and the About page: the product
- * name, labelled RAG, then About, the dashboard and the theme toggle.
+ * name, labelled RAG, then About, the dashboard and the theme toggle. It
+ * sticks to the top of the viewport, above the page but below the lightbox.
  *
  * The name links home, so the About page has a way back without a separate
  * back link. `current` marks the page the reader is on for assistive tech.
@@ -12,7 +13,10 @@ const focus = 'acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 ac
 
 export function SiteNav({ current = 'home' }: { current?: 'home' | 'about' }) {
   return (
-    <nav aria-label="Site" className="acb:flex acb:items-center acb:justify-between acb:gap-4 acb:px-4 acb:pt-4">
+    <nav
+      aria-label="Site"
+      className="acb:sticky acb:top-0 acb:z-30 acb:flex acb:items-center acb:justify-between acb:gap-4 acb:border-b acb:border-line acb:bg-surface acb:px-4 acb:py-3"
+    >
       <span className="acb:flex acb:items-center acb:gap-2">
         <a
           href="/"

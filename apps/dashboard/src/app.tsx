@@ -177,11 +177,15 @@ function noop(): void {
  * The way back to the landing page, and the theme toggle, on every state of
  * the dashboard, so a visitor who opened it from the landing page is never
  * stranded. In production both pages share an origin, so `/` is the landing
- * page; in development the dashboard is its own server and `/` is not.
+ * page; in development the dashboard is its own server and `/` is not. The
+ * bar sticks to the top of the viewport as the dashboard scrolls.
  */
 function TopBar() {
   return (
-    <nav aria-label="Site" className="acb:flex acb:items-center acb:justify-between acb:gap-4">
+    <nav
+      aria-label="Site"
+      className="acb:sticky acb:top-0 acb:z-30 acb:flex acb:items-center acb:justify-between acb:gap-4 acb:bg-surface acb:py-3"
+    >
       <a
         href="/"
         className="acb:inline-flex acb:h-10 acb:items-center acb:gap-2 acb:rounded-md acb:no-underline acb:border acb:border-line acb:bg-surface acb:px-4 acb:text-sm acb:font-medium acb:text-ink acb:hover:bg-surface-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
