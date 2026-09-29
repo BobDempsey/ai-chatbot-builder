@@ -11,7 +11,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ASK_EVENT } from './ask-event';
 import { BUBBLE_CLASS } from './bubble';
 import type { MountChat } from './chat/island';
-import { createWidget, type WidgetHandle } from './embed';
+import { apiBaseFor, createWidget, type WidgetHandle } from './embed';
 
 const BOT_ID = '00000000-0000-4000-8000-000000000041';
 
@@ -161,5 +161,27 @@ describe('the theme', () => {
     document.documentElement.setAttribute('data-acb-theme', 'light');
     await Promise.resolve();
     expect(widget.host.getAttribute('data-acb-theme')).toBe('light');
+  });
+});
+
+describe('the script tag', () => {
+  function scriptTag(attributes: Record<string, string>): HTMLScriptElement {
+    const tag = document.createElement('script');
+    for (const [name, value] of Object.entries(attributes)) tag.setAttribute(name, value);
+    return tag;
+  }
+
+  it('sends requests to the origin that served the script, not the host page', () => {
+    const tag = scriptTag({ src: 'https://bots.example.com/embed.js', 'data-acb-bot': BOT_ID });
+    expect(apiBaseFor(tag)).toBe('https://bots.example.com');
+  });
+
+  it('sends requests to data-acb-api when the tag sets it', () => {
+    const tag = scriptTag({
+      src: 'https://bots.example.com/embed.js',
+      'data-acb-bot': BOT_ID,
+      'data-acb-api': 'https://api.example.com',
+    });
+    expect(apiBaseFor(tag)).toBe('https://api.example.com');
   });
 });

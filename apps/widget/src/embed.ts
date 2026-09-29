@@ -136,6 +136,15 @@ export function createWidget(options: WidgetOptions): WidgetHandle {
 }
 
 /**
+ * Where a script tag's requests go: `data-acb-api` if set, otherwise the
+ * origin that served the script. A relative base would send them to the host
+ * page's own origin, which has no such API.
+ */
+export function apiBaseFor(tag: HTMLScriptElement): string {
+  return tag.dataset.acbApi ?? new URL(tag.src, document.baseURI).origin;
+}
+
+/**
  * The script tag path. Importing this module from the landing page finds no
  * such tag and mounts nothing, so that page can call `createWidget` itself.
  */
@@ -143,8 +152,7 @@ function mountFromScriptTag(): void {
   const tag = document.querySelector<HTMLScriptElement>(`script[${BOT_ID_ATTRIBUTE}]`);
   const botId = tag?.dataset.acbBot;
   if (!tag || !botId) return;
-  const apiBase = tag.dataset.acbApi ?? '';
-  createWidget({ botId, apiBase });
+  createWidget({ botId, apiBase: apiBaseFor(tag) });
 }
 
 if (typeof document !== 'undefined') mountFromScriptTag();
