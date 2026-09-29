@@ -221,7 +221,7 @@ Checked live after the deploy: a static page served on `localhost:5199` with the
 
 ### Icon, portfolio and profile, 2026-09-29
 
-None of this is pushed; the owner asked to hold every push until they say so. Three repos carry unpushed commits: this one, `BobDempsey/bobdempsey83.com` and `BobDempsey/BobDempsey`. The last two were not on this machine, so they were cloned to `Desktop/bobdempsey83.com` and `Desktop/BobDempsey`.
+None of this is pushed; the owner asked to hold every push until they say so. Three repos carry unpushed commits: this one, `BobDempsey/bobdempsey83.com` and `BobDempsey/BobDempsey`. The portfolio repo lives at `C:\codeobdempsey83.com` and the profile repo at `C:\code\BobDempsey`. (`C:\codeobdempsey83.com-v1` points at the same remote but is the old site on its `development` branch; leave it alone.)
 
 The Vercel project icon comes from the site's favicon; the REST API has no icon field. The site had none and answered `/favicon.ico` with a 404. `apps/landing/public/` now holds `favicon.svg` (a white chat bubble on the `#2563eb` accent), a 32px `favicon.ico` and a 180px `apple-touch-icon.png`, and all three pages link them by absolute path, so the dashboard under `/dashboard/` finds them too. The PNG and ICO were rasterized in the browser, the same way as the screenshots. Whether Vercel picks the icon up can only be checked after a deploy.
 
