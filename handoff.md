@@ -219,6 +219,24 @@ The one-line script tag had never been tried on a page outside this project's ow
 
 Checked live after the deploy: a static page served on `localhost:5199` with the unmodified tag from the dashboard loaded the bubble, fetched the bot from the live API across origins, and answered "How do refunds work?" with two cited sections. CORS on both routes already worked; only the default was wrong. `embed.js` is served with `max-age=300`, so a browser that loaded the old file keeps it for up to five minutes after a deploy; the retest used a cache-busted `src`.
 
+### Icon, portfolio and profile, 2026-09-29
+
+None of this is pushed; the owner asked to hold every push until they say so. Three repos carry unpushed commits: this one, `BobDempsey/bobdempsey83.com` and `BobDempsey/BobDempsey`. The last two were not on this machine, so they were cloned to `Desktop/bobdempsey83.com` and `Desktop/BobDempsey`.
+
+The Vercel project icon comes from the site's favicon; the REST API has no icon field. The site had none and answered `/favicon.ico` with a 404. `apps/landing/public/` now holds `favicon.svg` (a white chat bubble on the `#2563eb` accent), a 32px `favicon.ico` and a 180px `apple-touch-icon.png`, and all three pages link them by absolute path, so the dashboard under `/dashboard/` finds them too. The PNG and ICO were rasterized in the browser, the same way as the screenshots. Whether Vercel picks the icon up can only be checked after a deploy.
+
+The portfolio card is `content/portfolio/02-ai-chatbot-builder.md` at `order: 2`, behind AI Storefront and AI Frontend Advisor, which keeps the portfolio repo's decision to lead with AI Storefront. The fifteen cards after it moved down one, filename prefixes included, and `public/chat-context.json` was regenerated. The description leads with the AI feature and quotes no numbers. The profile README gained a third 🤖 line, which sits beside the portfolio handoff's note that it lists only AI projects.
+
+The `resumeProjects` entry is not done, and it needs the owner. The resume must stay at two pages, and a fifth project pushes it to three even with no bullets at all, only a name and a one-line description. Something else on the resume has to shrink or go first, and the portfolio repo's handoff records the owner's decisions to keep the current filler, so an agent should not choose. The drafted entry is below; each line fit on one line in the local render.
+
+- Description: "AI support chatbot that answers your visitors from your own docs, with citations."
+- "RAG on pgvector: OpenAI embeddings, HNSW search, cited answers, and a measured no-answer floor."
+- "Embeds with one script tag; a 2.3 KB shadow-DOM loader keeps host-page CSS out both ways."
+- "No-login demo with per-session Postgres RLS, edge rate limits, and a cron sweep of expired data."
+- "React 19, Hono, TypeScript, Supabase, Tailwind, shadcn/ui, Vitest, GitHub Actions, and Vercel."
+
+Task 9.5 in the OpenSpec change stays open until the resume entry lands.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.

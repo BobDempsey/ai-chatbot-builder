@@ -1,7 +1,7 @@
 # Remaining tasks
 
-- [ ] Set the Vercel project icon
-- [x] Add screenshots to the README and fix its Deploying section
-- [ ] Add the portfolio entry
+- [ ] Decide what to cut so the resume fits the new project
 - [ ] Add the resumeProjects entry
-- [ ] Update the GitHub profile README
+- [ ] Push the three repos
+- [ ] Confirm Vercel shows the new project icon
+- [ ] Archive the OpenSpec change
