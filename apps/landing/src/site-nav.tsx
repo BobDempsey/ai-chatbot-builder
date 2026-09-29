@@ -6,7 +6,7 @@
  * The name links home, so the About page has a way back without a separate
  * back link. `current` marks the page the reader is on for assistive tech.
  */
-import { Badge, ThemeToggle } from '@acb/ui';
+import { Badge, SourceLink, ThemeToggle } from '@acb/ui';
 import { LayoutDashboard } from 'lucide-react';
 
 const focus = 'acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent';
@@ -42,6 +42,7 @@ export function SiteNav({ current = 'home' }: { current?: 'home' | 'about' }) {
           <LayoutDashboard aria-hidden="true" className="acb:size-4" />
           Open the dashboard
         </a>
+        <SourceLink />
         <ThemeToggle />
       </div>
     </nav>

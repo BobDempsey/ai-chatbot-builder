@@ -21,7 +21,7 @@ import {
   type RatingSummary,
   type UnansweredQuestion,
 } from '@acb/schemas';
-import { SiteFooter, ThemeToggle, themeStyle } from '@acb/ui';
+import { SiteFooter, SourceLink, ThemeToggle, themeStyle } from '@acb/ui';
 import { ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
@@ -193,7 +193,10 @@ function TopBar() {
         <ArrowLeft aria-hidden="true" className="acb:size-4" />
         Back to the home page
       </a>
-      <ThemeToggle />
+      <div className="acb:flex acb:items-center acb:gap-2">
+        <SourceLink />
+        <ThemeToggle />
+      </div>
     </nav>
   );
 }

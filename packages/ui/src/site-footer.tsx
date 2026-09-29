@@ -1,15 +1,15 @@
 /**
- * The footer on the landing page, the About page and the dashboard: who built
- * this, a way back to the portfolio it belongs to (in a new tab, so the demo
- * stays open), the source, and the About page.
+ * The footer on the landing page, the About page and the dashboard: the
+ * copyright, a way back to the portfolio it belongs to (in a new tab, so the
+ * demo stays open), the source, and the About page.
  *
  * The widget never carries it. It runs on customers' pages, where a link to
  * this project's author would be somebody else's footer.
  */
 import { cn } from './cn';
+import { SourceLink } from './source-link';
 
 export const PORTFOLIO_URL = 'https://bobdempsey83.com';
-export const REPO_URL = 'https://github.com/BobDempsey/ai-chatbot-builder';
 
 export interface SiteFooterProps {
   /** Where "About this app" points: `/about` on every page that carries the footer. */
@@ -25,9 +25,11 @@ export interface SiteFooterProps {
 const link =
   'acb:font-medium acb:text-ink acb:underline acb:underline-offset-4 acb:hover:text-ink-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent';
 
-const newTab = <span className="acb:sr-only"> (opens in a new tab)</span>;
-
 export function SiteFooter({ aboutHref, contentClassName = 'acb:max-w-2xl', className }: SiteFooterProps) {
+  // Rendered once per mount rather than pinned to a build date, so the year is
+  // right on a site that stays deployed across New Year.
+  const year = new Date().getFullYear();
+
   return (
     // `mt-auto` pins it to the bottom of a short page, as long as the page's
     // container is a full-height flex column.
@@ -41,21 +43,16 @@ export function SiteFooter({ aboutHref, contentClassName = 'acb:max-w-2xl', clas
         )}
       >
         <p>
-          Built by Bob Dempsey. More projects on my portfolio site at{' '}
+          &copy; {year} -{' '}
           <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className={link}>
-            bobdempsey83.com
-            {newTab}
+            Bob Dempsey<span className="acb:sr-only"> (opens in a new tab)</span>
           </a>
-          .
         </p>
-        <nav aria-label="About this project" className="acb:flex acb:items-center acb:gap-4">
-          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={link}>
-            Source on GitHub
-            {newTab}
-          </a>
+        <nav aria-label="About this project" className="acb:flex acb:items-center acb:gap-3">
           <a href={aboutHref} className={link}>
             About this app
           </a>
+          <SourceLink />
         </nav>
       </div>
     </footer>

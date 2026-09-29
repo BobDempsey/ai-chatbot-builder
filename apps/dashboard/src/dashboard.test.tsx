@@ -229,14 +229,19 @@ describe('getting around', () => {
 });
 
 describe('the footer', () => {
-  it('links to the portfolio and to the About section on the landing page', async () => {
+  it('links to the portfolio, the source and the About section on the landing page', async () => {
     await openDashboard();
     const footer = screen.getByRole('contentinfo');
     expect(
       within(footer)
-        .getByRole('link', { name: /bobdempsey83\.com/ })
+        .getByRole('link', { name: /Bob Dempsey/ })
         .getAttribute('href'),
     ).toBe('https://bobdempsey83.com');
+    expect(
+      within(footer)
+        .getByRole('link', { name: /Source on GitHub/ })
+        .getAttribute('href'),
+    ).toBe('https://github.com/BobDempsey/ai-chatbot-builder');
     expect(within(footer).getByRole('link', { name: 'About this app' }).getAttribute('href')).toBe('/about');
   });
 });

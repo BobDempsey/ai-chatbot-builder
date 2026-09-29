@@ -3,6 +3,7 @@ export { cn } from './cn';
 export { Lightbox, type LightboxProps } from './lightbox';
 export { Badge, Button, type ButtonProps, Card, Dialog, type DialogProps, Input, ScrollArea, Textarea } from './primitives';
 export { PORTFOLIO_URL, SiteFooter, type SiteFooterProps } from './site-footer';
+export { REPO_URL, SourceLink } from './source-link';
 export { readableInk, themeStyle } from './theme';
 export {
   applyTheme,

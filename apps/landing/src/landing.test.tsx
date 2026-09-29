@@ -208,10 +208,23 @@ describe('the About page link and the footer', () => {
   it('ends with a footer that opens the portfolio in a new tab', () => {
     render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
     const footer = screen.getByRole('contentinfo');
-    const portfolio = within(footer).getByRole('link', { name: /bobdempsey83\.com/ });
+    const portfolio = within(footer).getByRole('link', { name: /Bob Dempsey/ });
     expect(portfolio.getAttribute('href')).toBe('https://bobdempsey83.com');
     expect(portfolio.getAttribute('target')).toBe('_blank');
     expect(portfolio.getAttribute('rel')).toContain('noopener');
     expect(within(footer).getByRole('link', { name: 'About this app' }).getAttribute('href')).toBe('/about');
+    expect(
+      within(footer)
+        .getByRole('link', { name: /Source on GitHub/ })
+        .getAttribute('href'),
+    ).toBe('https://github.com/BobDempsey/ai-chatbot-builder');
+  });
+
+  it('links the source from the top bar', () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+    const nav = screen.getByRole('navigation', { name: 'Site' });
+    const source = within(nav).getByRole('link', { name: /Source on GitHub/ });
+    expect(source.getAttribute('href')).toBe('https://github.com/BobDempsey/ai-chatbot-builder');
+    expect(source.getAttribute('target')).toBe('_blank');
   });
 });
