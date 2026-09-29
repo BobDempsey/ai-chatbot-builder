@@ -101,7 +101,7 @@ export function App() {
           <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
           <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
         </main>
-        <SiteFooter aboutHref="/#about" />
+        <SiteFooter aboutHref="/about" />
       </>
     );
   }
@@ -116,7 +116,7 @@ export function App() {
             Loading your workspace.
           </p>
         </main>
-        <SiteFooter aboutHref="/#about" />
+        <SiteFooter aboutHref="/about" />
       </>
     );
   }
@@ -154,7 +154,7 @@ export function App() {
           </div>
         </div>
       </main>
-      <SiteFooter aboutHref="/#about" />
+      <SiteFooter aboutHref="/about" />
     </>
   );
 }

@@ -40,8 +40,8 @@ describe('the theme toggle', () => {
     expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
   });
 
-  it.each(['landing', 'dashboard'])('is inlined unchanged in the %s page head', (app) => {
-    const html = readFileSync(join(import.meta.dirname, '..', '..', '..', 'apps', app, 'index.html'), 'utf8');
+  it.each(['landing', 'landing/about', 'dashboard'])('is inlined unchanged in the %s page head', (page) => {
+    const html = readFileSync(join(import.meta.dirname, '..', '..', '..', 'apps', page, 'index.html'), 'utf8');
     expect(html).toContain(`<script>${THEME_SCRIPT}</script>`);
   });
 });

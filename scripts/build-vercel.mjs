@@ -31,7 +31,7 @@ const CORS = { 'access-control-allow-origin': '*' };
 
 /**
  * `handle: filesystem` divides the table: everything above it runs on every
- * request, everything below it only when no file matched. The two rewrites
+ * request, everything below it only when no file matched. The rewrites
  * therefore cannot swallow a real asset under `/dashboard/assets`.
  */
 const config = {
@@ -46,6 +46,7 @@ const config = {
     { handle: 'filesystem' },
     { src: '/api(/.*)?', dest: '/api' },
     { src: '/dashboard(/.*)?', dest: '/dashboard/index.html' },
+    { src: '/about/?', dest: '/about/index.html' },
   ],
   crons: [{ path: '/api/cron/sweep', schedule: '0 4 * * *' }],
 };
@@ -74,6 +75,10 @@ if (!existsSync(join(STATIC, 'index.html'))) {
 }
 if (!existsSync(join(STATIC, 'dashboard', 'index.html'))) {
   console.error('dashboard/index.html is missing, so the dashboard link would 404.');
+  process.exit(1);
+}
+if (!existsSync(join(STATIC, 'about', 'index.html'))) {
+  console.error('about/index.html is missing, so the About link would 404.');
   process.exit(1);
 }
 if (!existsSync(join(OUT, 'functions', 'api.func', 'index.js'))) {

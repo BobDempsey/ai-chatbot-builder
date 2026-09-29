@@ -1,6 +1,6 @@
 /**
- * The footer on the landing page and the dashboard: who built this, a way back
- * to the portfolio it belongs to, and the About section.
+ * The footer on the landing page, the About page and the dashboard: who built
+ * this, a way back to the portfolio it belongs to, and the About page.
  *
  * The widget never carries it. It runs on customers' pages, where a link to
  * this project's author would be somebody else's footer.
@@ -10,7 +10,7 @@ import { cn } from './cn';
 export const PORTFOLIO_URL = 'https://bobdempsey83.com';
 
 export interface SiteFooterProps {
-  /** Where "About this app" points. The landing page passes `#about`, the dashboard `/#about`. */
+  /** Where "About this app" points: `/about` on every page that carries the footer. */
   aboutHref: string;
   className?: string;
 }
