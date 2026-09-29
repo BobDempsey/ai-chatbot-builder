@@ -72,7 +72,7 @@ One pnpm workspace. `apps/api` is the Hono API, `apps/dashboard` the admin scree
 The widget renders inside a shadow root, so a host page's CSS cannot reach in and the widget's cannot leak out. What a page pays to carry the tag is a 2.3 KB gzipped entry script; the chat itself downloads on first hover, focus or click. `scripts/check-embed-size.mjs` fails the build if that entry goes over 4 KB, which is how an accidental barrel import gets caught.
 
 ```sh
-pnpm test        # 177 tests, no key and no database needed
+pnpm test        # 178 tests, no key and no database needed
 pnpm typecheck
 pnpm lint
 ```

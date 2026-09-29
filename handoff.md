@@ -191,6 +191,8 @@ The dark tokens were written from the start and never applied. `prefix(acb)` in 
 
 The app starts on the landing page at `/`. Below the chat box it now has "How it works" (four steps from `STEPS` in `apps/landing/src/app.tsx`), "What you get" with two screenshots, and the existing RAG paragraph and dashboard link. The screenshots live in `apps/landing/public/screens/` as WebP, one light and one dark of each (`dashboard-*.webp` at 1280 by 800, `widget-*.webp` at 384 by 747), and CSS shows the one matching the toggle through the new `acb:dark:` variant, which `styles.css` keys on `data-acb-theme` rather than the system. A landing test fails if a referenced image file is missing. The README task can reuse the same files.
 
+The landing page's column is `max-w-6xl` from 2026-09-29, matching the loaded dashboard, and the footer on it takes the same width so the edges line up; the About page stays at `max-w-2xl`.
+
 They were taken from the live site with Playwright at 1280 by 800. The widget shot needed the panel's fixed height lifted in the page (`[role=dialog]` height auto, its scroll area overflow visible) so the whole answer and both sources fit, and the dark and light widget shots are the same answer with the toggle clicked between them, so only one live question was spent. Retake them after any visible UI change. No WebP encoder is installed on this machine (no Pillow, `cwebp` or ImageMagick), so the 2026-09-29 retake saved PNGs with Playwright, drew them onto a canvas in the browser and wrote `canvas.toDataURL('image/webp', 0.85)` back to disk. That came out near 38KB per dashboard shot, against about 90KB for the originals.
 
 ### Navigation and the lightbox, 2026-09-29
@@ -207,7 +209,7 @@ About is its own page at `/about`, a second Vite entry (`apps/landing/about/inde
 
 Checked locally on 2026-09-29: `/about` and `/about/` both serve the page in development and in the assembled `.vercel/output`, and the footer's content edges match the page column to the pixel on the About page and the loaded dashboard, with the footer flush to the bottom of the viewport. ~~These three commits are not pushed; the owner is verifying them first.~~ **Pushed 2026-09-29;** `master` matches `origin/master`.
 
-~~The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.~~ **Fixed 2026-09-29.** The README now opens with the dashboard and widget screenshots as `<picture>` elements, so GitHub shows the dark pair to a reader in dark mode, and "Deploying" describes the Build Output API, the one function, `/about` and `data-acb-api`. The test count there is 177, with the nine Postgres integration tests noted as skipping without `ACB_TEST_DB_URL`.
+~~The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.~~ **Fixed 2026-09-29.** The README now opens with the dashboard and widget screenshots as `<picture>` elements, so GitHub shows the dark pair to a reader in dark mode, and "Deploying" describes the Build Output API, the one function, `/about` and `data-acb-api`. The test count there is 178, with the nine Postgres integration tests noted as skipping without `ACB_TEST_DB_URL`.
 
 ### Sticky navigation, 2026-09-29
 
@@ -237,9 +239,9 @@ With all 72 tasks ticked, `add-rag-chatbot-mvp` is archived at `openspec/changes
 
 The owner reviewed the deployed footer and asked for three changes, made in `f6c97b1` and `d4394ae`. The left side is now "&copy; <year> - Bob Dempsey", with the name linking to bobdempsey83.com in a new tab; the year comes from `new Date().getFullYear()` at render, so it is right on a deploy that outlives New Year. The source link is a GitHub icon rather than words, in `packages/ui/src/source-link.tsx` alongside `REPO_URL`, and the same component sits in `SiteNav` and the dashboard's `TopBar`. The mark is an inline SVG: lucide-react 1.47 ships no brand icons, so `import { Github } from 'lucide-react'` fails to typecheck. The footer row also carries `pb-20` below the `sm` breakpoint, because the widget launcher floats over the bottom-right corner and covered the links on a narrow screen.
 
-Both footer tests matched the link by its old name, `/bobdempsey83\.com/`, and had to move to `/Bob Dempsey/`; each now also asserts the GitHub link's href, and the landing suite has a new test for the icon in the top bar. 13 landing tests, 23 dashboard, 85 in all across the workspaces, with CI green on `f6c97b1` (run 36612205589).
+Both footer tests matched the link by its old name, `/bobdempsey83\.com/`, and had to move to `/Bob Dempsey/`; each now also asserts the GitHub link's href, and the landing suite has a new test for the icon in the top bar. 13 landing tests, 23 dashboard, 178 in all across the workspaces (plus the nine Postgres integration tests that skip without `ACB_TEST_DB_URL`), with CI green on `f6c97b1` (run 36612205589).
 
-The GitHub repo's topics were set from the portfolio side: ai, chatbot, embeddable-widget, embeddings, hono, nodejs, openai-api, pgvector, postgresql, rag, rag-chatbot, react, supabase, tailwindcss, typescript, vercel, vite. The repo's Website field was pointing at the `vercel.app` URL and should be https://ai-chatbot-builder.bobdempsey83.com.
+The GitHub repo's topics were set from the portfolio side: ai, chatbot, embeddable-widget, embeddings, hono, nodejs, openai-api, pgvector, postgresql, rag, rag-chatbot, react, supabase, tailwindcss, typescript, vercel, vite. ~~The repo's Website field was pointing at the `vercel.app` URL and should be https://ai-chatbot-builder.bobdempsey83.com.~~ **Fixed 2026-09-29.** The Website field is the subdomain.
 
 ### Working with the owner
 
