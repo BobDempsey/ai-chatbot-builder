@@ -1,4 +1,4 @@
 # Remaining tasks
 
-- [ ] Push the three repos
+- [x] Push the three repos
 - [ ] Confirm Vercel shows the new project icon
