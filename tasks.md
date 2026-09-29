@@ -5,7 +5,7 @@
 - [x] Enable Vercel Web Analytics
 - [x] Add dark mode
 - [x] Add how-it-works content and screenshots to the landing page
-- [ ] Attach the bobdempsey83.com subdomain
+- [x] Attach the bobdempsey83.com subdomain
 - [ ] Set the Vercel project icon
 - [ ] Add screenshots to the README
 - [ ] Add the portfolio entry

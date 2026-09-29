@@ -2,7 +2,7 @@
 
 Upload your documentation, get an embeddable support chatbot that answers from it and cites the section it used.
 
-Live site: https://ai-chatbot-builder-pi.vercel.app
+Live site: https://ai-chatbot-builder.bobdempsey83.com
 
 There is no sign-up and no login. The first request mints an anonymous session with a workspace of its own, seeded with a sample bot, three fictional document sets, past conversations, ratings and analytics, so every screen has data the first time you open it. The workspace lives 24 hours and is then deleted.
 
