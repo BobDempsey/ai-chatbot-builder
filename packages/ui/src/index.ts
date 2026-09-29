@@ -2,6 +2,7 @@ export { Answer, type AnswerProps } from './answer';
 export { cn } from './cn';
 export { Lightbox, type LightboxProps } from './lightbox';
 export { Badge, Button, type ButtonProps, Card, Dialog, type DialogProps, Input, ScrollArea, Textarea } from './primitives';
+export { PORTFOLIO_URL, SiteFooter, type SiteFooterProps } from './site-footer';
 export { readableInk, themeStyle } from './theme';
 export {
   applyTheme,

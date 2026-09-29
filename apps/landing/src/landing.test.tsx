@@ -14,7 +14,7 @@ import type { ChatEvent } from '@acb/schemas';
 import type { MountChat } from '@acb/widget';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEMO_BOT_ID, Landing, PROMPTS, STEPS } from './app';
+import { DEMO_BOT_ID, Landing, PROMPTS, RAG_STEPS, STACK, STEPS } from './app';
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
@@ -160,7 +160,10 @@ describe('how it works', () => {
   it('lists the steps in order and shows a screenshot for each theme that exists', () => {
     render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
 
-    const steps = screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent);
+    const howItWorks = screen.getByRole('region', { name: 'How it works' });
+    const steps = within(howItWorks)
+      .getAllByRole('heading', { level: 3 })
+      .map((heading) => heading.textContent);
     expect(steps).toEqual(STEPS.map((step) => step.title));
 
     const sources = [...document.querySelectorAll('img')].map((image) => image.getAttribute('src') ?? '');
@@ -191,5 +194,26 @@ describe('getting around', () => {
     expect(within(dialog).getAllByRole('img').length).toBeGreaterThan(0);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
+});
+
+describe('about this app', () => {
+  it('labels the app as RAG and explains the pipeline and the stack', () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+    const nav = screen.getByRole('navigation', { name: 'Site' });
+    expect(within(nav).getByText('RAG')).toBeTruthy();
+    expect(within(nav).getByRole('link', { name: 'About' }).getAttribute('href')).toBe('#about');
+
+    const about = screen.getByRole('region', { name: 'About this app' });
+    expect(about.id).toBe('about');
+    const text = about.textContent ?? '';
+    for (const step of RAG_STEPS) expect(text).toContain(step.title);
+    for (const item of STACK) expect(text).toContain(item.detail);
+  });
+
+  it('ends with a footer linking back to the portfolio', () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+    const footer = screen.getByRole('contentinfo');
+    expect(within(footer).getByRole('link', { name: 'bobdempsey83.com' }).getAttribute('href')).toBe('https://bobdempsey83.com');
   });
 });

@@ -199,6 +199,12 @@ The owner asked for three changes. The landing page now opens with a `Site` nav 
 
 The landing's dashboard screenshots predate the back link, so retake them (see "Landing content and screenshots") before the README task reuses them. The widget's bubble sits above the lightbox overlay, since the widget host uses a very high z-index; it looks odd but blocks nothing.
 
+### Footer, RAG label and About, 2026-09-29
+
+The owner asked for three more. `SiteFooter` in `packages/ui/src/site-footer.tsx` is on the landing page and every dashboard state: "Built by Bob Dempsey. More projects at bobdempsey83.com." plus an "About this app" link (`#about` on the landing page, `/#about` from the dashboard). The widget does not carry it, since it runs on customers' pages. The landing nav shows a `RAG` badge beside the title, with a tooltip spelling it out, and an `About` link on screens `sm` and up. The About section (`id="about"`) replaced "What happens behind the answer": a plain definition of RAG, the five pipeline steps from `RAG_STEPS` and the stack from `STACK` in `apps/landing/src/app.tsx`, and the dashboard link. The numbers there match the README's "How an answer is made"; change both together.
+
+The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.

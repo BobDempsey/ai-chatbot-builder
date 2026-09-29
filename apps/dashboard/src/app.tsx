@@ -21,7 +21,7 @@ import {
   type RatingSummary,
   type UnansweredQuestion,
 } from '@acb/schemas';
-import { ThemeToggle, themeStyle } from '@acb/ui';
+import { SiteFooter, ThemeToggle, themeStyle } from '@acb/ui';
 import { ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
@@ -95,58 +95,67 @@ export function App() {
 
   if (loadFailure) {
     return (
-      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
-        <TopBar />
-        <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
-        <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
-      </main>
+      <>
+        <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+          <TopBar />
+          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
+          <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
+        </main>
+        <SiteFooter aboutHref="/#about" />
+      </>
     );
   }
 
   if (!bot) {
     return (
-      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
-        <TopBar />
-        <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
-        <p role="status" className="acb:mt-2 acb:text-sm acb:text-ink-muted">
-          Loading your workspace.
-        </p>
-      </main>
+      <>
+        <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+          <TopBar />
+          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
+          <p role="status" className="acb:mt-2 acb:text-sm acb:text-ink-muted">
+            Loading your workspace.
+          </p>
+        </main>
+        <SiteFooter aboutHref="/#about" />
+      </>
     );
   }
 
   return (
-    <main style={themeStyle(bot)} className="acb:mx-auto acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
-      <TopBar />
-      <header>
-        <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
-        <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
-      </header>
+    <>
+      <main style={themeStyle(bot)} className="acb:mx-auto acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
+        <TopBar />
+        <header>
+          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
+          <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
+        </header>
 
-      <div className="acb:grid acb:gap-6 acb:lg:grid-cols-2">
-        <div className="acb:space-y-6">
-          <SettingsPanel settings={bot} onSave={save} />
-          <DocumentsPanel
-            documents={documents}
-            corpus={corpus}
-            onCorpusChange={(next, loaded) => {
-              setCorpus(next);
-              setDocuments(loaded);
-            }}
-            onDocuments={setDocuments}
-            refresh={api.getDocuments}
-          />
-          <EmbedSnippet publicId={bot.publicId} />
-        </div>
+        <div className="acb:grid acb:gap-6 acb:lg:grid-cols-2">
+          <div className="acb:space-y-6">
+            <SettingsPanel settings={bot} onSave={save} />
+            <DocumentsPanel
+              documents={documents}
+              corpus={corpus}
+              onCorpusChange={(next, loaded) => {
+                setCorpus(next);
+                setDocuments(loaded);
+              }}
+              onDocuments={setDocuments}
+              refresh={api.getDocuments}
+            />
+            <EmbedSnippet publicId={bot.publicId} />
+          </div>
 
-        <div className="acb:space-y-6">
-          <PreviewChat settings={bot} documents={documents} onRate={rate} onDeclined={refreshUnanswered} />
-          <RatingsPanel summary={summary} />
-          <ConversationsPanel conversations={conversations} onRate={rate} />
-          <UnansweredPanel questions={unanswered} />
+          <div className="acb:space-y-6">
+            <PreviewChat settings={bot} documents={documents} onRate={rate} onDeclined={refreshUnanswered} />
+            <RatingsPanel summary={summary} />
+            <ConversationsPanel conversations={conversations} onRate={rate} />
+            <UnansweredPanel questions={unanswered} />
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+      <SiteFooter aboutHref="/#about" />
+    </>
   );
 }
 

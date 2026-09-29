@@ -9,6 +9,9 @@
 - [x] Put the dashboard link at the top of the landing page
 - [x] Open landing screenshots full size on click
 - [x] Add a clear way back to the landing page from the dashboard
+- [x] Add a footer linking back to bobdempsey83.com
+- [x] Label the app as RAG beside its title
+- [x] Add an About section with the tech stack and the RAG process
 - [ ] Set the Vercel project icon
 - [ ] Retake the landing screenshots with the new navigation
 - [ ] Add screenshots to the README
