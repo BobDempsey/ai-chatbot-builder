@@ -5,6 +5,13 @@
 
 /* The dashboard owns its document, so it sets the page defaults too. */
 @layer base {
+  /* A full-height column, so the footer sits at the bottom of a short page. */
+  #root {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
   body {
     margin: 0;
     background: var(--acb-color-surface);

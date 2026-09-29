@@ -53,9 +53,9 @@ export const STACK = [
 
 export function About() {
   return (
-    <div className="acb:min-h-screen acb:bg-surface acb:text-ink">
+    <div className="acb:flex acb:min-h-screen acb:flex-col acb:bg-surface acb:text-ink">
       <SiteNav current="about" />
-      <main className="acb:mx-auto acb:max-w-2xl acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
+      <main className="acb:mx-auto acb:w-full acb:max-w-2xl acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
         <section aria-labelledby="about-heading" className="acb:space-y-6">
           <div className="acb:space-y-2">
             <h1 id="about-heading" className="acb:text-3xl acb:font-semibold acb:text-ink acb:sm:text-4xl">

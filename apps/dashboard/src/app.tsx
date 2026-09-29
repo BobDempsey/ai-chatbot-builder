@@ -96,12 +96,12 @@ export function App() {
   if (loadFailure) {
     return (
       <>
-        <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+        <main className="acb:mx-auto acb:w-full acb:max-w-2xl acb:space-y-4 acb:p-6">
           <TopBar />
           <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
           <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
         </main>
-        <SiteFooter aboutHref="/about" />
+        <SiteFooter aboutHref="/about" contentClassName="acb:max-w-2xl acb:px-6" />
       </>
     );
   }
@@ -109,21 +109,21 @@ export function App() {
   if (!bot) {
     return (
       <>
-        <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+        <main className="acb:mx-auto acb:w-full acb:max-w-2xl acb:space-y-4 acb:p-6">
           <TopBar />
           <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
           <p role="status" className="acb:mt-2 acb:text-sm acb:text-ink-muted">
             Loading your workspace.
           </p>
         </main>
-        <SiteFooter aboutHref="/about" />
+        <SiteFooter aboutHref="/about" contentClassName="acb:max-w-2xl acb:px-6" />
       </>
     );
   }
 
   return (
     <>
-      <main style={themeStyle(bot)} className="acb:mx-auto acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
+      <main style={themeStyle(bot)} className="acb:mx-auto acb:w-full acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
         <TopBar />
         <header>
           <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
@@ -154,7 +154,7 @@ export function App() {
           </div>
         </div>
       </main>
-      <SiteFooter aboutHref="/about" />
+      <SiteFooter aboutHref="/about" contentClassName="acb:max-w-6xl acb:sm:px-6" />
     </>
   );
 }
