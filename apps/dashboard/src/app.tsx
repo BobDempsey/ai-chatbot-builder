@@ -21,8 +21,8 @@ import {
   type RatingSummary,
   type UnansweredQuestion,
 } from '@acb/schemas';
-import { SiteFooter, SourceLink, ThemeToggle, themeStyle } from '@acb/ui';
-import { ArrowLeft } from 'lucide-react';
+import { Badge, Card, SiteFooter, SourceLink, ThemeToggle, themeStyle } from '@acb/ui';
+import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
 import { ConversationsPanel } from './conversations-panel';
@@ -98,8 +98,8 @@ export function App() {
       <>
         <main className="acb:mx-auto acb:w-full acb:max-w-2xl acb:space-y-4 acb:p-6">
           <TopBar />
-          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
-          <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
+          <h1 className="acb:text-2xl acb:font-semibold acb:tracking-tight acb:text-ink">Dashboard</h1>
+          <Card className="acb:text-sm acb:text-ink">{loadFailure}</Card>
         </main>
         <SiteFooter aboutHref="/about" contentClassName="acb:max-w-2xl acb:px-6" />
       </>
@@ -111,10 +111,11 @@ export function App() {
       <>
         <main className="acb:mx-auto acb:w-full acb:max-w-2xl acb:space-y-4 acb:p-6">
           <TopBar />
-          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
-          <p role="status" className="acb:mt-2 acb:text-sm acb:text-ink-muted">
+          <h1 className="acb:text-2xl acb:font-semibold acb:tracking-tight acb:text-ink">Dashboard</h1>
+          <Card role="status" className="acb:flex acb:items-center acb:gap-3 acb:text-sm acb:text-ink-muted">
+            <Loader2 aria-hidden="true" className="acb:size-4 acb:animate-spin acb:text-accent" />
             Loading your workspace.
-          </p>
+          </Card>
         </main>
         <SiteFooter aboutHref="/about" contentClassName="acb:max-w-2xl acb:px-6" />
       </>
@@ -125,9 +126,33 @@ export function App() {
     <>
       <main style={themeStyle(bot)} className="acb:mx-auto acb:w-full acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
         <TopBar />
-        <header>
-          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
-          <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
+        {/*
+         * The header names the bot and the workspace it lives in, and the
+         * tiles under it are the counts the panels below hold, so the first
+         * screenful says what is here before anything has to be scrolled to.
+         */}
+        <header className="acb:space-y-4">
+          <div className="acb:flex acb:flex-wrap acb:items-center acb:gap-3">
+            <h1 className="acb:text-2xl acb:font-semibold acb:tracking-tight acb:text-ink acb:sm:text-3xl">{bot.name}</h1>
+            <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:text-accent">
+              <Sparkles aria-hidden="true" className="acb:size-3" />
+              Your workspace
+            </Badge>
+          </div>
+          <p className="acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
+          <dl className="acb:grid acb:grid-cols-2 acb:gap-3 acb:sm:grid-cols-4">
+            {[
+              { value: documents.length, label: 'documents indexed' },
+              { value: conversations.length, label: 'conversations' },
+              { value: summary.up + summary.down, label: 'answers rated' },
+              { value: unanswered.length, label: 'questions unanswered' },
+            ].map((tile) => (
+              <div key={tile.label} className="acb:rounded-panel acb:border acb:border-line acb:bg-surface-muted acb:p-3">
+                <dt className="acb:text-xl acb:font-semibold acb:tabular-nums acb:text-ink">{tile.value}</dt>
+                <dd className="acb:m-0 acb:mt-0.5 acb:text-xs acb:text-ink-muted">{tile.label}</dd>
+              </div>
+            ))}
+          </dl>
         </header>
 
         <div className="acb:grid acb:gap-6 acb:lg:grid-cols-2">
@@ -184,7 +209,7 @@ function TopBar() {
   return (
     <nav
       aria-label="Site"
-      className="acb:sticky acb:top-0 acb:z-30 acb:flex acb:items-center acb:justify-between acb:gap-4 acb:bg-surface acb:py-3"
+      className="acb:sticky acb:top-0 acb:z-30 acb:mb-2 acb:flex acb:items-center acb:justify-between acb:gap-4 acb:border-b acb:border-line acb:bg-surface acb:py-3"
     >
       <a
         href="/"
