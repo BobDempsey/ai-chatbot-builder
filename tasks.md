@@ -1,3 +1,3 @@
 # Remaining tasks
 
-Nothing outstanding.
+- [ ] Write the relevance-floor blog post in the portfolio repo

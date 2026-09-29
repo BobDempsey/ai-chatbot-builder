@@ -95,7 +95,7 @@ The floor is now measured rather than guessed: answerable questions land between
 
 ~~The fake route itself is gone, but two files still name it: `apps/landing/vite.config.ts` proxies `/api` to port 5180 in development, and a comment in `apps/landing/src/app.tsx` says the bot id is the one the fake answers for.~~ **Fixed 2026-09-21.** The proxy was already right, because the real API took over the fake's port. The bot id was not: the landing page opened the widget on the fake's hardcoded id and every question came back "That chatbot could not be found." The page now fetches `/api/bot` on mount and re-creates the widget on the `publicId` that call returns, since each session is seeded with a bot of its own and no id can be compiled in. A question typed before that call lands is re-sent afterwards rather than dropped. `DEMO_BOT_ID` survives as the placeholder the widget mounts on first paint and the id the tests assert against.
 
-~~Outstanding work is task 8.1 and 9.1 to 9.5 in `openspec/changes/add-rag-chatbot-mvp/tasks.md`: the Vercel Firewall rules, the cron expiry sweep, expiry enforced on read, the fictional-data labels, then the deploy, the README and the portfolio entry.~~ **Updated 2026-09-29.** Task 9.5, the portfolio entry, is the only item still open in `openspec/changes/add-rag-chatbot-mvp/tasks.md`. Task 8.1 is ticked: the edge rate limit is published and a burst was rejected, and Bot Protection is on Log for the reason given under "The firewall rule". ~~Of the six items the owner added to `tasks.md` on 2026-09-23, analytics, dark mode, the landing content and the subdomain are done, and two remain: the Vercel project icon and README screenshots.~~ **Nothing is outstanding as of 2026-09-29.** Every task in the OpenSpec change is done and the change is archived, the README has its screenshots, the portfolio card, `resumeProjects` entry and profile README line are live, the project icon is set, and all three repos are pushed. `tasks.md` is empty until new work is agreed.
+~~Outstanding work is task 8.1 and 9.1 to 9.5 in `openspec/changes/add-rag-chatbot-mvp/tasks.md`: the Vercel Firewall rules, the cron expiry sweep, expiry enforced on read, the fictional-data labels, then the deploy, the README and the portfolio entry.~~ **Updated 2026-09-29.** Task 9.5, the portfolio entry, is the only item still open in `openspec/changes/add-rag-chatbot-mvp/tasks.md`. Task 8.1 is ticked: the edge rate limit is published and a burst was rejected, and Bot Protection is on Log for the reason given under "The firewall rule". ~~Of the six items the owner added to `tasks.md` on 2026-09-23, analytics, dark mode, the landing content and the subdomain are done, and two remain: the Vercel project icon and README screenshots.~~ **Nothing was outstanding as of 2026-09-29**, and one item opened later that day: the blog post under "Against the portfolio project spec". Every task in the OpenSpec change is done and the change is archived, the README has its screenshots and its stack table, the portfolio card, `resumeProjects` entry and profile README line are live, the project icon is set, and all three repos are pushed.
 
 ### Running it locally, 2026-09-21
 
@@ -243,9 +243,31 @@ Both footer tests matched the link by its old name, `/bobdempsey83\.com/`, and h
 
 The GitHub repo's topics were set from the portfolio side: ai, chatbot, embeddable-widget, embeddings, hono, nodejs, openai-api, pgvector, postgresql, rag, rag-chatbot, react, supabase, tailwindcss, typescript, vercel, vite. ~~The repo's Website field was pointing at the `vercel.app` URL and should be https://ai-chatbot-builder.bobdempsey83.com.~~ **Fixed 2026-09-29.** The Website field is the subdomain.
 
+### The UI pass, 2026-09-29 (later still)
+
+The owner asked for a current-looking landing page, after a web search for 2026 SaaS patterns: lead with the product, cards rather than stacked prose, real screenshots, proof in numbers, and motion as decoration. Those patterns are now written into the portfolio repo's `docs/portfolio-project-spec.md` as its section 2, "UI style", so the next project starts from them; the sections after it were renumbered 3 to 7.
+
+The landing page (`4b74232`) puts the headline, the ask box and the prompts in one panel over a blurred accent disc, then four step cards, a row of the measured retrieval numbers, the two screenshots side by side from `lg`, and a closing band. The About page (`03b3012`) took the same shapes and the same 4xl column. The dashboard (`5128397`) leads with the bot name at 2xl, a workspace badge and four tiles counting documents, conversations, rated answers and unanswered questions, and its loading and failed states sit in cards.
+
+The column went `max-w-2xl`, then `6xl` to match the dashboard, then back to `4xl` (`ff7b398`): 6xl left the prose lines too long. The About page follows at 4xl.
+
+Three things about the motion are load-bearing. The scroll reveal is `animation-timeline: view()`, so there is no observer and no JavaScript, and it is inside `@media (prefers-reduced-motion: no-preference)` in `apps/landing/src/styles.css`. Its hook is `data-acb-rise`, an attribute rather than a class, because `scripts/check-css.mjs` fails the build on any class that does not carry the `acb:` prefix. The hero never animates, since a fade on first paint is a blank page.
+
+`--acb-color-accent-text` is new (`2e3307c`). The accent as small text is not the accent as a background: `#2563eb` reads 4.7:1 on the light surfaces and 3.1:1 on the dark ones. The token follows `--acb-color-accent` in light and is `color-mix(in oklab, ... 55%, white)` in dark, so a bot's saved color still comes through, and the widget restates it on `:host` because `:root` never matches inside a shadow tree. Measured in the browser afterwards: 4.74 and 5.17 in light, 7.09 and 7.91 in dark. Use it for any accent-colored text; `text-accent` stays for backgrounds and decorative icons.
+
+The dashboard screenshots were retaken again (`49e69ea`), from the local dashboard on 5181 rather than the live site, because the new header had not deployed yet. Playwright's `screenshot` takes `type: 'webp'`, so Chromium encodes the file and the canvas round-trip earlier retakes needed is gone; inject `html{scrollbar-width:none}` first or the scrollbar is in the shot. The widget shots were left alone.
+
+### Against the portfolio project spec, 2026-09-29
+
+The app was checked against `docs/portfolio-project-spec.md` in `C:\codeobdempsey83.com`. Four items failed. Three are fixed: the dark-mode accent contrast above, the dashboard top bar now carries the product name linking home (`2e3307c`), and the README has a stack table above "Running it locally" (`9d2babd`).
+
+The fourth is open and is the only outstanding work in this repo: a blog post under `content/blog/` in the portfolio repo. The subject is the relevance floor, which cannot separate a chunk about the right subject from one that holds the answer ("what wine goes with fish pie" retrieves the fish pie chunk at 0.51), how the floor was measured rather than guessed, and why the model's `NO_ANSWER` has to catch what the number misses. It is on the global todo list as well. Nothing in this repo blocks it.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.
+
+He reviews UI work in a browser before it is committed, so build the change, run the dev servers and hand him the URLs rather than committing and asking. He holds pushes until he says so. He also asks yes-or-no questions and wants exactly that back, with the reasoning only if he asks for it.
 
 Two kinds of action in this session needed his say-so before they would run, both refused by the harness rather than by him: `git restore` over files, and creating the Vercel deployment. Expect the same for anything destructive or outward-facing, and ask in one line rather than working around it.
 
