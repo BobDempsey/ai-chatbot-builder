@@ -4,6 +4,16 @@ Upload your documentation, get an embeddable support chatbot that answers from i
 
 Live site: https://ai-chatbot-builder.bobdempsey83.com
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="apps/landing/public/screens/dashboard-dark.webp">
+  <img alt="The dashboard: bot settings, a preview chat, ratings and the conversation log for a seeded demo bot" src="apps/landing/public/screens/dashboard-light.webp" width="800">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="apps/landing/public/screens/widget-dark.webp">
+  <img alt="The embedded widget answering a refund question with two numbered sources" src="apps/landing/public/screens/widget-light.webp" width="300">
+</picture>
+
 There is no sign-up and no login. The first request mints an anonymous session with a workspace of its own, seeded with a sample bot, three fictional document sets, past conversations, ratings and analytics, so every screen has data the first time you open it. The workspace lives 24 hours and is then deleted.
 
 ## What you can do in a few minutes
@@ -59,18 +69,22 @@ pnpm --filter @acb/api templates:load
 
 One pnpm workspace. `apps/api` is the Hono API, `apps/dashboard` the admin screens, `apps/widget` the embeddable chat, and `apps/landing` the chat-first landing page. `packages/schemas` holds the Zod schemas and the limits both sides need, and `packages/ui` the shadcn components, so the preview chat and the embedded widget render the same markup. `supabase/migrations` holds the six migrations, and `openspec/` the change proposal this was built from.
 
-The widget renders inside a shadow root, so a host page's CSS cannot reach in and the widget's cannot leak out. What a page pays to carry the tag is a 2.1 KB gzipped entry script; the chat itself downloads on first hover, focus or click. `scripts/check-embed-size.mjs` fails the build if that entry goes over 4 KB, which is how an accidental barrel import gets caught.
+The widget renders inside a shadow root, so a host page's CSS cannot reach in and the widget's cannot leak out. What a page pays to carry the tag is a 2.3 KB gzipped entry script; the chat itself downloads on first hover, focus or click. `scripts/check-embed-size.mjs` fails the build if that entry goes over 4 KB, which is how an accidental barrel import gets caught.
 
 ```sh
-pnpm test        # 146 tests, no key and no database needed
+pnpm test        # 177 tests, no key and no database needed
 pnpm typecheck
 pnpm lint
 ```
+
+Nine more Postgres integration tests run when `ACB_TEST_DB_URL` points at a local database; they skip otherwise.
 
 `pnpm --filter @acb/api eval` asks the live model 31 fixture questions and fails any reply quoting a figure its grounding does not contain. It spends credit, so it runs by hand and never in CI.
 
 ## Deploying
 
-`vercel.json` builds every workspace, checks the embed entry size, and assembles one `dist/` from the three front-end builds: the widget at the root because the embed tag is `/embed.js`, the dashboard under `/dashboard/`, the landing page at the root. `api/[[...route]].ts` is the single function, and a daily cron calls `/api/cron/sweep` to delete expired workspaces.
+`vercel.json` holds only the install and build commands; the build writes `.vercel/output` through Vercel's Build Output API. It builds every workspace, checks the embed entry size, then runs `scripts/build-function.mjs` to bundle the API into a single function and `scripts/build-vercel.mjs` to copy the front ends into place and write the routing table. The widget sits at the root because the embed tag is `/embed.js`, the landing page and `/about` share the root with it, and the dashboard lives under `/dashboard/`. Every `/api` request goes to the one function, and a daily cron calls `/api/cron/sweep` to delete expired workspaces.
 
 Set `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` and `CRON_SECRET` as Sensitive environment variables in the Vercel project. The function refuses to boot if any is missing, which is better than answering with fake clients and looking like it worked.
+
+The embed tag sends its requests to the origin that served `embed.js`. To serve the script from one host and the API from another, add `data-acb-api="https://api-host"` to the tag.

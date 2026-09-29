@@ -207,7 +207,7 @@ About is its own page at `/about`, a second Vite entry (`apps/landing/about/inde
 
 Checked locally on 2026-09-29: `/about` and `/about/` both serve the page in development and in the assembled `.vercel/output`, and the footer's content edges match the page column to the pixel on the About page and the loaded dashboard, with the footer flush to the bottom of the viewport. ~~These three commits are not pushed; the owner is verifying them first.~~ **Pushed 2026-09-29;** `master` matches `origin/master`.
 
-The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.
+~~The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.~~ **Fixed 2026-09-29.** The README now opens with the dashboard and widget screenshots as `<picture>` elements, so GitHub shows the dark pair to a reader in dark mode, and "Deploying" describes the Build Output API, the one function, `/about` and `data-acb-api`. The test count there is 177, with the nine Postgres integration tests noted as skipping without `ACB_TEST_DB_URL`.
 
 ### Sticky navigation, 2026-09-29
 
