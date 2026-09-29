@@ -205,9 +205,13 @@ The owner asked for three more, then revised two of them the same day. `SiteFoot
 
 About is its own page at `/about`, a second Vite entry (`apps/landing/about/index.html`, `src/about-main.tsx`, `src/about.tsx`) listed in `rollupOptions.input`, so it loads without the widget or a session request. It holds a plain definition of RAG, the five pipeline steps from `RAG_STEPS` and the stack from `STACK`; the numbers match the README's "How an answer is made", so change both together. `build-vercel.mjs` routes `/about` to `about/index.html` below the filesystem handler and fails the build if the file is missing. Vite's dev server only finds the page with a trailing slash, so `vite.config.ts` has a small `acb-about-route` middleware that rewrites `/about`. The nav bar is `SiteNav` in `apps/landing/src/site-nav.tsx`, shared by both pages: the title links home, a `RAG` badge sits beside it with a tooltip spelling it out, and `About` carries `aria-current` on its own page. The landing page keeps one line under the screenshots pointing to `/about`. `THEME_SCRIPT` is inlined in the About page's head too, and the toggle test checks all three copies.
 
-Checked locally on 2026-09-29: `/about` and `/about/` both serve the page in development and in the assembled `.vercel/output`, and the footer's content edges match the page column to the pixel on the About page and the loaded dashboard, with the footer flush to the bottom of the viewport. These three commits are not pushed; the owner is verifying them first.
+Checked locally on 2026-09-29: `/about` and `/about/` both serve the page in development and in the assembled `.vercel/output`, and the footer's content edges match the page column to the pixel on the About page and the loaded dashboard, with the footer flush to the bottom of the viewport. ~~These three commits are not pushed; the owner is verifying them first.~~ **Pushed 2026-09-29;** `master` matches `origin/master`.
 
 The README's "Deploying" section is stale: it still describes one assembled `dist/` and `api/[[...route]].ts`, where the build now writes `.vercel/output` through the Build Output API (see "The deploy shape"). Fix it with the README screenshots task.
+
+### Sticky navigation, 2026-09-29
+
+The `Site` bar stays in view on scroll. `SiteNav` and the dashboard's `TopBar` are `sticky top-0` with a `bg-surface` background and `z-30`, which keeps them above the page and below the lightbox overlay (`z-40`) and dialog (`z-50`). `SiteNav` also gained a bottom border and `py-3` in place of `pt-4`, so page content scrolls under a clean edge. Checked on the landing page in development: 800px down, the bar sat at the top of the viewport. The dashboard was not checked in a browser, since its loaded state needs the API. The retaken screenshots will show the bordered bar.
 
 ### Working with the owner
 

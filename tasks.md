@@ -1,21 +1,5 @@
 # Remaining tasks
 
-- [x] Add the edge rate limit on API writes
-- [x] Decide on bot protection for the API
-- [x] Enable Vercel Web Analytics
-- [x] Add dark mode
-- [x] Add how-it-works content and screenshots to the landing page
-- [x] Attach the bobdempsey83.com subdomain
-- [x] Put the dashboard link at the top of the landing page
-- [x] Open landing screenshots full size on click
-- [x] Add a clear way back to the landing page from the dashboard
-- [x] Add a footer linking back to bobdempsey83.com
-- [x] Label the app as RAG beside its title
-- [x] Add an About section with the tech stack and the RAG process
-- [x] Move About to its own page
-- [x] Open the portfolio link in a new tab
-- [x] Align the footer and pin it to the bottom
-- [ ] Verify the About page and footer, then push
 - [ ] Set the Vercel project icon
 - [ ] Retake the landing screenshots with the new navigation
 - [ ] Add screenshots to the README
