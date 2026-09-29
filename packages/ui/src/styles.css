@@ -23,7 +23,23 @@
   /* Overridden per bot from its saved accent color. */
   --color-accent: #2563eb;
   --color-accent-ink: #ffffff;
+  /*
+   * The accent as small text, which is not the same color as the accent as a
+   * background. The default blue reads at 4.7:1 on the light surfaces and at
+   * 3.1:1 on the dark ones, under the 4.5:1 bar, so the dark theme lightens
+   * whatever accent is in play rather than the page avoiding accent text.
+   * It is derived below, so a bot's saved color still comes through.
+   */
+  --color-accent-text: #2563eb;
   --radius-panel: 0.75rem;
+}
+
+/*
+ * Kept in step with the accent at runtime: `themeStyle` sets
+ * `--acb-color-accent` per bot, and these follow it.
+ */
+:root {
+  --acb-color-accent-text: var(--acb-color-accent);
 }
 
 /*
@@ -52,4 +68,5 @@
   --acb-color-ink: #f3f4f6;
   --acb-color-ink-muted: #a3a9b6;
   --acb-color-line: #2c3038;
+  --acb-color-accent-text: color-mix(in oklab, var(--acb-color-accent) 55%, white);
 }

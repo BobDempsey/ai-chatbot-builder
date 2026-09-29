@@ -69,7 +69,7 @@ export function About() {
               className="acb:pointer-events-none acb:absolute acb:inset-x-0 acb:-top-28 acb:-z-10 acb:mx-auto acb:h-56 acb:max-w-2xl acb:rounded-full acb:bg-accent/20 acb:blur-3xl"
             />
             <header className="acb:space-y-4 acb:text-center">
-              <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:px-3 acb:py-1 acb:text-accent">
+              <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:px-3 acb:py-1 acb:text-accent-text">
                 <Sparkles aria-hidden="true" className="acb:size-3.5" />
                 Retrieval-augmented generation
               </Badge>
@@ -120,7 +120,9 @@ export function About() {
             <dl className="acb:grid acb:gap-4 acb:sm:grid-cols-2">
               {STACK.map((item) => (
                 <div key={item.area} className="acb:rounded-panel acb:bg-surface-muted acb:p-4">
-                  <dt className="acb:text-xs acb:font-semibold acb:uppercase acb:tracking-wide acb:text-accent">{item.area}</dt>
+                  <dt className="acb:text-xs acb:font-semibold acb:uppercase acb:tracking-wide acb:text-accent-text">
+                    {item.area}
+                  </dt>
                   <dd className="acb:m-0 acb:mt-1 acb:text-sm acb:text-ink-muted">{item.detail}</dd>
                 </div>
               ))}

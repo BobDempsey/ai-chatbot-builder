@@ -134,7 +134,7 @@ export function App() {
         <header className="acb:space-y-4">
           <div className="acb:flex acb:flex-wrap acb:items-center acb:gap-3">
             <h1 className="acb:text-2xl acb:font-semibold acb:tracking-tight acb:text-ink acb:sm:text-3xl">{bot.name}</h1>
-            <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:text-accent">
+            <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:text-accent-text">
               <Sparkles aria-hidden="true" className="acb:size-3" />
               Your workspace
             </Badge>
@@ -199,11 +199,15 @@ function noop(): void {
 }
 
 /**
- * The way back to the landing page, and the theme toggle, on every state of
- * the dashboard, so a visitor who opened it from the landing page is never
- * stranded. In production both pages share an origin, so `/` is the landing
- * page; in development the dashboard is its own server and `/` is not. The
- * bar sticks to the top of the viewport as the dashboard scrolls.
+ * The product name, the way back to the landing page, the source and the
+ * theme toggle, on every state of the dashboard, so a visitor who opened it
+ * from the landing page is never stranded. The name carries the same job it
+ * has in the landing page's `SiteNav`: it is the link home, and it says which
+ * app this screen belongs to.
+ *
+ * In production both pages share an origin, so `/` is the landing page; in
+ * development the dashboard is its own server and `/` is not. The bar sticks
+ * to the top of the viewport as the dashboard scrolls.
  */
 function TopBar() {
   return (
@@ -211,13 +215,21 @@ function TopBar() {
       aria-label="Site"
       className="acb:sticky acb:top-0 acb:z-30 acb:mb-2 acb:flex acb:items-center acb:justify-between acb:gap-4 acb:border-b acb:border-line acb:bg-surface acb:py-3"
     >
-      <a
-        href="/"
-        className="acb:inline-flex acb:h-10 acb:items-center acb:gap-2 acb:rounded-md acb:no-underline acb:border acb:border-line acb:bg-surface acb:px-4 acb:text-sm acb:font-medium acb:text-ink acb:hover:bg-surface-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
-      >
-        <ArrowLeft aria-hidden="true" className="acb:size-4" />
-        Back to the home page
-      </a>
+      <div className="acb:flex acb:items-center acb:gap-3">
+        <a
+          href="/"
+          className="acb:rounded-md acb:text-sm acb:font-semibold acb:text-ink acb:no-underline acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
+        >
+          AI Chatbot Builder
+        </a>
+        <a
+          href="/"
+          className="acb:inline-flex acb:h-10 acb:items-center acb:gap-2 acb:rounded-md acb:no-underline acb:border acb:border-line acb:bg-surface acb:px-4 acb:text-sm acb:font-medium acb:text-ink acb:hover:bg-surface-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
+        >
+          <ArrowLeft aria-hidden="true" className="acb:size-4" />
+          Back to the home page
+        </a>
+      </div>
       <div className="acb:flex acb:items-center acb:gap-2">
         <SourceLink />
         <ThemeToggle />

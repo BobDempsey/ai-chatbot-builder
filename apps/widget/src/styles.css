@@ -18,4 +18,10 @@
   --acb-color-ink: #f3f4f6;
   --acb-color-ink-muted: #a3a9b6;
   --acb-color-line: #2c3038;
+  --acb-color-accent-text: color-mix(in oklab, var(--acb-color-accent) 55%, white);
+}
+
+/* The light default, which `:root` carries on a page the widget cannot reach. */
+:host {
+  --acb-color-accent-text: var(--acb-color-accent);
 }

@@ -151,7 +151,7 @@ export function Landing({ botId, loadChat }: LandingProps) {
             className="acb:pointer-events-none acb:absolute acb:inset-x-0 acb:-top-28 acb:-z-10 acb:mx-auto acb:h-56 acb:max-w-2xl acb:rounded-full acb:bg-accent/20 acb:blur-3xl"
           />
           <header className="acb:space-y-4 acb:text-center">
-            <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:px-3 acb:py-1 acb:text-accent">
+            <Badge className="acb:gap-1.5 acb:border-accent/30 acb:bg-accent/10 acb:px-3 acb:py-1 acb:text-accent-text">
               <FileText aria-hidden="true" className="acb:size-3.5" />
               Answers from your docs, with citations
             </Badge>
