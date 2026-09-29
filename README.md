@@ -44,6 +44,18 @@ The API talks to Postgres directly rather than through PostgREST, because the se
 
 With no login, the caps are the rest of the defense. One question is at most 1000 characters, a body over 32 KB is refused before it is parsed, history is capped at 10 turns, an upload at 5 MB, a session at 10 documents and 20 questions per ten minutes. Vercel Firewall rate-limits and bot-filters at the edge on top of that.
 
+## Built with
+
+| Layer | What it uses |
+| --- | --- |
+| Front end | React 19, TypeScript, Vite, Tailwind CSS 4, shadcn/ui on Radix, lucide-react |
+| Widget | A shadow-DOM embed: a 2.3 KB gzipped script tag, with the chat loaded on first reach |
+| API | Hono on Vercel Functions, with Zod validating every request and response |
+| Data | Supabase Postgres with pgvector, an HNSW index, and row-level security per session |
+| AI | OpenAI `text-embedding-3-small` for vectors and `gpt-5.6-luna` for answers |
+| Hosting | Vercel: Build Output API, a firewall rate limit, Web Analytics, a daily cron sweep |
+| Tooling | A pnpm monorepo, Vitest, Biome, GitHub Actions, OpenSpec change proposals |
+
 ## Running it locally
 
 You need Node 22 and pnpm 10.15.1.
