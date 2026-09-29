@@ -17,3 +17,33 @@
     font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+/*
+ * Sections rise into place as the reader scrolls to them, staggered by their
+ * order on the page. It is `animation-timeline: view()`, so there is no
+ * observer and no JavaScript; a browser without it simply shows the section,
+ * because the rule sits inside the feature query and nothing else hides it.
+ *
+ * Every animated rule is behind `prefers-reduced-motion: no-preference`, so a
+ * reader who has asked for stillness gets the page with no movement at all.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-acb-rise] {
+      animation: acb-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+
+  @keyframes acb-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
