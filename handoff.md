@@ -1,6 +1,6 @@
 # Handoff: AI Chatbot Builder
 
-Updated 2026-09-23. Earlier revisions: 2026-09-21, 2026-09-17.
+Updated 2026-09-29. Earlier revisions: 2026-09-23, 2026-09-21, 2026-09-17.
 
 ## AI Chatbot Builder brief
 
@@ -95,7 +95,7 @@ The floor is now measured rather than guessed: answerable questions land between
 
 ~~The fake route itself is gone, but two files still name it: `apps/landing/vite.config.ts` proxies `/api` to port 5180 in development, and a comment in `apps/landing/src/app.tsx` says the bot id is the one the fake answers for.~~ **Fixed 2026-09-21.** The proxy was already right, because the real API took over the fake's port. The bot id was not: the landing page opened the widget on the fake's hardcoded id and every question came back "That chatbot could not be found." The page now fetches `/api/bot` on mount and re-creates the widget on the `publicId` that call returns, since each session is seeded with a bot of its own and no id can be compiled in. A question typed before that call lands is re-sent afterwards rather than dropped. `DEMO_BOT_ID` survives as the placeholder the widget mounts on first paint and the id the tests assert against.
 
-~~Outstanding work is task 8.1 and 9.1 to 9.5 in `openspec/changes/add-rag-chatbot-mvp/tasks.md`: the Vercel Firewall rules, the cron expiry sweep, expiry enforced on read, the fictional-data labels, then the deploy, the README and the portfolio entry.~~ **Updated 2026-09-23.** Only task 8.1, the Vercel Firewall rules, and task 9.5, the portfolio entry, are still open in `openspec/changes/add-rag-chatbot-mvp/tasks.md`; 9.1 to 9.4 are ticked. The subdomain gap is closed, see "Live, verified" below. The owner added six items to `tasks.md` on 2026-09-23: Vercel Web Analytics (neither `@vercel/analytics` nor `@vercel/speed-insights` is installed), dark mode, how-it-works content and screenshots on the landing page, README screenshots (the README has none), the Vercel project icon, and the subdomain. The app starts on the landing page at `/`, so that page is where the new content goes. `tasks.md` orders the work so each step feeds the next: abuse controls and analytics before the site is promoted, dark mode before any screenshot is taken, the landing content and subdomain before the README, and the portfolio, `resumeProjects` and profile README last, because they link the subdomain and reuse the screenshots.
+~~Outstanding work is task 8.1 and 9.1 to 9.5 in `openspec/changes/add-rag-chatbot-mvp/tasks.md`: the Vercel Firewall rules, the cron expiry sweep, expiry enforced on read, the fictional-data labels, then the deploy, the README and the portfolio entry.~~ **Updated 2026-09-29.** Task 9.5, the portfolio entry, is the only item still open in `openspec/changes/add-rag-chatbot-mvp/tasks.md`. Task 8.1 is ticked: the edge rate limit is published and a burst was rejected, and Bot Protection is on Log for the reason given under "The firewall rule". Of the six items the owner added to `tasks.md` on 2026-09-23, analytics, dark mode, the landing content and the subdomain are done, and two remain: the Vercel project icon and README screenshots (the files in `apps/landing/public/screens/` can be reused). `tasks.md` keeps the portfolio, `resumeProjects` and profile README last, because they link the subdomain and reuse the screenshots.
 
 ### Running it locally, 2026-09-21
 
