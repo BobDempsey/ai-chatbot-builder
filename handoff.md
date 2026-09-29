@@ -1,6 +1,6 @@
 # Handoff: AI Chatbot Builder
 
-Updated 2026-09-29. Earlier revisions: 2026-09-23, 2026-09-21, 2026-09-17.
+Updated 2026-09-29. Earlier revisions: 2026-09-29, 2026-09-23, 2026-09-21, 2026-09-17.
 
 ## AI Chatbot Builder brief
 
@@ -232,6 +232,14 @@ The portfolio card is `content/portfolio/02-ai-chatbot-builder.md` at `order: 2`
 ### OpenSpec archive, 2026-09-29
 
 With all 72 tasks ticked, `add-rag-chatbot-mvp` is archived at `openspec/changes/archive/2026-09-29-add-rag-chatbot-mvp/`. Its seven delta specs, all ADDED requirements, became the main specs in `openspec/specs/` (29 requirements across abuse-limits, admin-dashboard, anonymous-session, demo-workspace, document-ingestion, embeddable-widget and retrieval-answering), and `openspec validate --specs` passes all seven. Paths above that name `openspec/changes/add-rag-chatbot-mvp/` now live under the archive folder. The next change starts from `openspec/specs/`.
+
+### The footer and the source link, 2026-09-29 (later)
+
+The owner reviewed the deployed footer and asked for three changes, made in `f6c97b1` and `d4394ae`. The left side is now "&copy; <year> - Bob Dempsey", with the name linking to bobdempsey83.com in a new tab; the year comes from `new Date().getFullYear()` at render, so it is right on a deploy that outlives New Year. The source link is a GitHub icon rather than words, in `packages/ui/src/source-link.tsx` alongside `REPO_URL`, and the same component sits in `SiteNav` and the dashboard's `TopBar`. The mark is an inline SVG: lucide-react 1.47 ships no brand icons, so `import { Github } from 'lucide-react'` fails to typecheck. The footer row also carries `pb-20` below the `sm` breakpoint, because the widget launcher floats over the bottom-right corner and covered the links on a narrow screen.
+
+Both footer tests matched the link by its old name, `/bobdempsey83\.com/`, and had to move to `/Bob Dempsey/`; each now also asserts the GitHub link's href, and the landing suite has a new test for the icon in the top bar. 13 landing tests, 23 dashboard, 85 in all across the workspaces, with CI green on `f6c97b1` (run 36612205589).
+
+The GitHub repo's topics were set from the portfolio side: ai, chatbot, embeddable-widget, embeddings, hono, nodejs, openai-api, pgvector, postgresql, rag, rag-chatbot, react, supabase, tailwindcss, typescript, vercel, vite. The repo's Website field was pointing at the `vercel.app` URL and should be https://ai-chatbot-builder.bobdempsey83.com.
 
 ### Working with the owner
 
