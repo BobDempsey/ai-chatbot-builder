@@ -1,6 +1,7 @@
 /**
  * The footer on the landing page, the About page and the dashboard: who built
- * this, a way back to the portfolio it belongs to, and the About page.
+ * this, a way back to the portfolio it belongs to (in a new tab, so the demo
+ * stays open), and the About page.
  *
  * The widget never carries it. It runs on customers' pages, where a link to
  * this project's author would be somebody else's footer.
@@ -24,8 +25,8 @@ export function SiteFooter({ aboutHref, className }: SiteFooterProps) {
       <div className="acb:mx-auto acb:flex acb:max-w-6xl acb:flex-wrap acb:items-center acb:justify-between acb:gap-3 acb:px-4 acb:py-6 acb:text-sm acb:text-ink-muted">
         <p>
           Built by Bob Dempsey. More projects at{' '}
-          <a href={PORTFOLIO_URL} className={link}>
-            bobdempsey83.com
+          <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" className={link}>
+            bobdempsey83.com<span className="acb:sr-only"> (opens in a new tab)</span>
           </a>
           .
         </p>

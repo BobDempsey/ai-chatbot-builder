@@ -205,10 +205,13 @@ describe('the About page link and the footer', () => {
     expect(within(nav).getByRole('link', { name: 'About' }).getAttribute('href')).toBe('/about');
   });
 
-  it('ends with a footer linking back to the portfolio and to About', () => {
+  it('ends with a footer that opens the portfolio in a new tab', () => {
     render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
     const footer = screen.getByRole('contentinfo');
-    expect(within(footer).getByRole('link', { name: 'bobdempsey83.com' }).getAttribute('href')).toBe('https://bobdempsey83.com');
+    const portfolio = within(footer).getByRole('link', { name: /bobdempsey83\.com/ });
+    expect(portfolio.getAttribute('href')).toBe('https://bobdempsey83.com');
+    expect(portfolio.getAttribute('target')).toBe('_blank');
+    expect(portfolio.getAttribute('rel')).toContain('noopener');
     expect(within(footer).getByRole('link', { name: 'About this app' }).getAttribute('href')).toBe('/about');
   });
 });

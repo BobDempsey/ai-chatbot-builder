@@ -232,7 +232,11 @@ describe('the footer', () => {
   it('links to the portfolio and to the About section on the landing page', async () => {
     await openDashboard();
     const footer = screen.getByRole('contentinfo');
-    expect(within(footer).getByRole('link', { name: 'bobdempsey83.com' }).getAttribute('href')).toBe('https://bobdempsey83.com');
+    expect(
+      within(footer)
+        .getByRole('link', { name: /bobdempsey83\.com/ })
+        .getAttribute('href'),
+    ).toBe('https://bobdempsey83.com');
     expect(within(footer).getByRole('link', { name: 'About this app' }).getAttribute('href')).toBe('/about');
   });
 });
