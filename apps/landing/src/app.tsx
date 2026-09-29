@@ -110,7 +110,7 @@ export function Landing({ botId, loadChat }: LandingProps) {
   return (
     <div className="acb:flex acb:min-h-screen acb:flex-col acb:bg-surface acb:text-ink">
       <SiteNav />
-      <main className="acb:mx-auto acb:w-full acb:max-w-6xl acb:space-y-8 acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
+      <main className="acb:mx-auto acb:w-full acb:max-w-4xl acb:space-y-8 acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
         <header className="acb:space-y-3">
           <h1 className="acb:text-3xl acb:font-semibold acb:text-ink acb:sm:text-4xl">Your docs, answering for themselves.</h1>
           <p className="acb:text-base acb:text-ink-muted">
@@ -204,7 +204,7 @@ export function Landing({ botId, loadChat }: LandingProps) {
           .
         </p>
       </main>
-      <SiteFooter aboutHref="/about" contentClassName="acb:max-w-6xl" />
+      <SiteFooter aboutHref="/about" contentClassName="acb:max-w-4xl" />
     </div>
   );
 }
