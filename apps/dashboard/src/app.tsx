@@ -22,6 +22,7 @@ import {
   type UnansweredQuestion,
 } from '@acb/schemas';
 import { ThemeToggle, themeStyle } from '@acb/ui';
+import { ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from './api';
 import { ConversationsPanel } from './conversations-panel';
@@ -94,7 +95,8 @@ export function App() {
 
   if (loadFailure) {
     return (
-      <main className="acb:mx-auto acb:max-w-2xl acb:p-6">
+      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+        <TopBar />
         <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
         <p className="acb:mt-2 acb:text-sm acb:text-ink">{loadFailure}</p>
       </main>
@@ -103,7 +105,8 @@ export function App() {
 
   if (!bot) {
     return (
-      <main className="acb:mx-auto acb:max-w-2xl acb:p-6">
+      <main className="acb:mx-auto acb:max-w-2xl acb:space-y-4 acb:p-6">
+        <TopBar />
         <h1 className="acb:text-xl acb:font-semibold acb:text-ink">Dashboard</h1>
         <p role="status" className="acb:mt-2 acb:text-sm acb:text-ink-muted">
           Loading your workspace.
@@ -114,12 +117,10 @@ export function App() {
 
   return (
     <main style={themeStyle(bot)} className="acb:mx-auto acb:max-w-6xl acb:space-y-6 acb:p-4 acb:sm:p-6">
-      <header className="acb:flex acb:items-start acb:justify-between acb:gap-4">
-        <div>
-          <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
-          <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
-        </div>
-        <ThemeToggle />
+      <TopBar />
+      <header>
+        <h1 className="acb:text-xl acb:font-semibold acb:text-ink">{bot.name}</h1>
+        <p className="acb:mt-1 acb:text-sm acb:text-ink-muted">Configure the bot, try it, and read back what visitors asked.</p>
       </header>
 
       <div className="acb:grid acb:gap-6 acb:lg:grid-cols-2">
@@ -161,4 +162,25 @@ function ratingsAlreadyLeft(conversations: Conversation[]): Record<string, Ratin
 
 function noop(): void {
   // A background refresh that fails leaves the previous list on screen.
+}
+
+/**
+ * The way back to the landing page, and the theme toggle, on every state of
+ * the dashboard, so a visitor who opened it from the landing page is never
+ * stranded. In production both pages share an origin, so `/` is the landing
+ * page; in development the dashboard is its own server and `/` is not.
+ */
+function TopBar() {
+  return (
+    <nav aria-label="Site" className="acb:flex acb:items-center acb:justify-between acb:gap-4">
+      <a
+        href="/"
+        className="acb:inline-flex acb:h-10 acb:items-center acb:gap-2 acb:rounded-md acb:no-underline acb:border acb:border-line acb:bg-surface acb:px-4 acb:text-sm acb:font-medium acb:text-ink acb:hover:bg-surface-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
+      >
+        <ArrowLeft aria-hidden="true" className="acb:size-4" />
+        Back to the home page
+      </a>
+      <ThemeToggle />
+    </nav>
+  );
 }

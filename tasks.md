@@ -6,6 +6,9 @@
 - [x] Add dark mode
 - [x] Add how-it-works content and screenshots to the landing page
 - [x] Attach the bobdempsey83.com subdomain
+- [x] Put the dashboard link at the top of the landing page
+- [x] Open landing screenshots full size on click
+- [x] Add a clear way back to the landing page from the dashboard
 - [ ] Set the Vercel project icon
 - [ ] Add screenshots to the README
 - [ ] Add the portfolio entry

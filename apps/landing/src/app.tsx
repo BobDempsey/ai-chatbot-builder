@@ -12,8 +12,9 @@
  * page gets.
  */
 import { DEMO_DATA_LABEL } from '@acb/schemas';
-import { Button, Card, cn, Textarea, ThemeToggle } from '@acb/ui';
+import { Button, Card, cn, Lightbox, Textarea, ThemeToggle } from '@acb/ui';
 import { askWidget, createWidget, type WidgetOptions } from '@acb/widget';
+import { LayoutDashboard } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 /**
@@ -108,9 +109,19 @@ export function Landing({ botId, loadChat }: LandingProps) {
 
   return (
     <div className="acb:min-h-screen acb:bg-surface acb:text-ink">
-      <div className="acb:flex acb:justify-end acb:px-4 acb:pt-4">
-        <ThemeToggle />
-      </div>
+      <nav aria-label="Site" className="acb:flex acb:items-center acb:justify-between acb:gap-4 acb:px-4 acb:pt-4">
+        <span className="acb:text-sm acb:font-semibold acb:text-ink">AI Chatbot Builder</span>
+        <div className="acb:flex acb:items-center acb:gap-2">
+          <a
+            href="/dashboard"
+            className="acb:inline-flex acb:h-10 acb:items-center acb:gap-2 acb:rounded-md acb:no-underline acb:border acb:border-line acb:bg-surface acb:px-4 acb:text-sm acb:font-medium acb:text-ink acb:hover:bg-surface-muted acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
+          >
+            <LayoutDashboard aria-hidden="true" className="acb:size-4" />
+            Open the dashboard
+          </a>
+          <ThemeToggle />
+        </div>
+      </nav>
       <main className="acb:mx-auto acb:max-w-2xl acb:space-y-8 acb:px-4 acb:pb-16 acb:pt-8 acb:sm:pb-24 acb:sm:pt-12">
         <header className="acb:space-y-3">
           <h1 className="acb:text-3xl acb:font-semibold acb:text-ink acb:sm:text-4xl">Your docs, answering for themselves.</h1>
@@ -232,18 +243,20 @@ interface ScreenshotProps {
  * One screenshot in the theme the page is in. Both are in the markup and CSS
  * shows one, keyed on the toggle's attribute, so switching needs no re-render.
  * The images were taken from the live site at 1280 by 800.
+ *
+ * The thumbnail is a button that opens the same image full size in a
+ * lightbox, since the dashboard shot is unreadable at the page's width.
  */
 function Screenshot({ name, width, height, alt, caption, className }: ScreenshotProps) {
-  const image = 'acb:h-auto acb:w-full acb:rounded-panel acb:border acb:border-line';
-  return (
-    <figure className={cn('acb:space-y-2', className)}>
+  const themed = (base: string) => (
+    <>
       <img
         src={`/screens/${name}-light.webp`}
         width={width}
         height={height}
         alt={alt}
         loading="lazy"
-        className={`${image} acb:dark:hidden`}
+        className={cn(base, 'acb:dark:hidden')}
       />
       <img
         src={`/screens/${name}-dark.webp`}
@@ -251,9 +264,30 @@ function Screenshot({ name, width, height, alt, caption, className }: Screenshot
         height={height}
         alt={alt}
         loading="lazy"
-        className={`${image} acb:hidden acb:dark:block`}
+        className={cn(base, 'acb:hidden acb:dark:block')}
       />
-      <figcaption className="acb:text-xs acb:text-ink-muted">{caption}</figcaption>
+    </>
+  );
+
+  return (
+    <figure className={cn('acb:space-y-2', className)}>
+      <Lightbox
+        title={alt}
+        trigger={
+          <button
+            type="button"
+            aria-label={`View full size: ${caption}`}
+            className="acb:block acb:w-full acb:cursor-zoom-in acb:rounded-panel acb:focus-visible:outline-2 acb:focus-visible:outline-offset-2 acb:focus-visible:outline-accent"
+          >
+            {themed(
+              'acb:h-auto acb:w-full acb:rounded-panel acb:border acb:border-line acb:transition-opacity acb:hover:opacity-90',
+            )}
+          </button>
+        }
+      >
+        {themed('acb:max-h-full acb:max-w-full acb:w-auto acb:h-auto acb:rounded-panel acb:object-contain')}
+      </Lightbox>
+      <figcaption className="acb:text-xs acb:text-ink-muted">{caption} Click to enlarge.</figcaption>
     </figure>
   );
 }

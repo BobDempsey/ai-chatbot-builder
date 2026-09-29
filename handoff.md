@@ -193,6 +193,12 @@ The app starts on the landing page at `/`. Below the chat box it now has "How it
 
 They were taken from the live site with Playwright at 1280 by 800. The widget shot needed the panel's fixed height lifted in the page (`[role=dialog]` height auto, its scroll area overflow visible) so the whole answer and both sources fit, and the dark and light widget shots are the same answer with the toggle clicked between them, so only one live question was spent. Retake them after any visible UI change.
 
+### Navigation and the lightbox, 2026-09-29
+
+The owner asked for three changes. The landing page now opens with a `Site` nav bar: the product name on the left, and `Open the dashboard` (a link styled as an outline button) beside the theme toggle on the right; the old link at the foot of the page stays. Each screenshot is a button that opens the same themed image full size in `Lightbox`, a new centered Radix dialog in `packages/ui/src/lightbox.tsx`, closed by Escape, a click outside or its close button. The dashboard has the same `Site` bar on every state (loading, failed, loaded) with `Back to the home page` linking `/` and the toggle. In development that link goes nowhere, because the dashboard is its own server on 5181; in production both share an origin. Tests cover each change.
+
+The landing's dashboard screenshots predate the back link, so retake them (see "Landing content and screenshots") before the README task reuses them. The widget's bubble sits above the lightbox overlay, since the widget host uses a very high z-index; it looks odd but blocks nothing.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.

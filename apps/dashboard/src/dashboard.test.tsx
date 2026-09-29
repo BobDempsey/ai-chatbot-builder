@@ -219,3 +219,11 @@ describe('5.7 embed snippet', () => {
     expect(shown).toContain(`${BOT_ID_ATTRIBUTE}="00000000-0000-4000-8000-000000000041"`);
   });
 });
+
+describe('getting around', () => {
+  it('links back to the landing page from the dashboard', async () => {
+    await openDashboard();
+    const nav = screen.getByRole('navigation', { name: 'Site' });
+    expect(within(nav).getByRole('link', { name: 'Back to the home page' }).getAttribute('href')).toBe('/');
+  });
+});

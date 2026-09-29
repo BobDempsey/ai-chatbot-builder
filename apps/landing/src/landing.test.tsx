@@ -12,7 +12,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ChatEvent } from '@acb/schemas';
 import type { MountChat } from '@acb/widget';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEMO_BOT_ID, Landing, PROMPTS, STEPS } from './app';
 
@@ -152,7 +152,7 @@ describe('the embedded widget on the page', () => {
     // The bubble and the panel are inside the shadow root, and nothing about
     // the page has become a dashboard.
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByRole('link', { name: 'Open the dashboard' })).toBeTruthy();
+    expect(screen.getAllByRole('link', { name: 'Open the dashboard' }).length).toBeGreaterThan(0);
   });
 });
 
@@ -168,5 +168,28 @@ describe('how it works', () => {
     for (const source of sources) {
       expect(existsSync(join(import.meta.dirname, '..', 'public', source))).toBe(true);
     }
+  });
+});
+
+describe('getting around', () => {
+  it('puts the dashboard link in the top bar, before anything else on the page', () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+    const nav = screen.getByRole('navigation', { name: 'Site' });
+    const link = within(nav).getByRole('link', { name: 'Open the dashboard' });
+    expect(link.getAttribute('href')).toBe('/dashboard');
+    expect(
+      nav.compareDocumentPosition(screen.getByRole('heading', { level: 1 })) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('opens a screenshot full size and closes it again', async () => {
+    render(<Landing botId={DEMO_BOT_ID} loadChat={vi.fn(async () => ({ mountChat: vi.fn<MountChat>(() => () => {}) }))} />);
+    const [thumbnail] = screen.getAllByRole('button', { name: /View full size/ });
+    fireEvent.click(thumbnail as HTMLElement);
+
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getAllByRole('img').length).toBeGreaterThan(0);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
 });
