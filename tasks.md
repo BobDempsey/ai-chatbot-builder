@@ -12,6 +12,10 @@
 - [x] Add a footer linking back to bobdempsey83.com
 - [x] Label the app as RAG beside its title
 - [x] Add an About section with the tech stack and the RAG process
+- [x] Move About to its own page
+- [x] Open the portfolio link in a new tab
+- [x] Align the footer and pin it to the bottom
+- [ ] Verify the About page and footer, then push
 - [ ] Set the Vercel project icon
 - [ ] Retake the landing screenshots with the new navigation
 - [ ] Add screenshots to the README
