@@ -229,6 +229,10 @@ The portfolio card is `content/portfolio/02-ai-chatbot-builder.md` at `order: 2`
 
 ~~The `resumeProjects` entry is not done, and it needs the owner. The resume must stay at two pages, and a fifth project pushes it to three even with no bullets at all, only a name and a one-line description. Something else on the resume has to shrink or go first, and the portfolio repo's handoff records the owner's decisions to keep the current filler, so an agent should not choose. The drafted entry is below; each line fit on one line in the local render.~~ **Done 2026-09-29.** The owner accepts a three-page resume rather than cutting another entry, so AI Chatbot Builder is third in `resumeProjects` with the four drafted bullets, and the PDF is now three pages. Each new line was measured at the PDF's 720px text width in Arial and Arimo and stays on one line. The portfolio repo's handoff records the changed page rule. Task 9.5 in the OpenSpec change is ticked, so every task in `add-rag-chatbot-mvp` is done.
 
+### OpenSpec archive, 2026-09-29
+
+With all 72 tasks ticked, `add-rag-chatbot-mvp` is archived at `openspec/changes/archive/2026-09-29-add-rag-chatbot-mvp/`. Its seven delta specs, all ADDED requirements, became the main specs in `openspec/specs/` (29 requirements across abuse-limits, admin-dashboard, anonymous-session, demo-workspace, document-ingestion, embeddable-widget and retrieval-answering), and `openspec validate --specs` passes all seven. Paths above that name `openspec/changes/add-rag-chatbot-mvp/` now live under the archive folder. The next change starts from `openspec/specs/`.
+
 ### Working with the owner
 
 He reads `tasks.md` and the OpenSpec list himself, so "what is left" comes back as two or three sentences of prose naming what unblocks what, never as a checklist read back to him. He asks for one-sentence answers often, and he means it.

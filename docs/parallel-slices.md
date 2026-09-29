@@ -12,7 +12,7 @@ They compose. Slices decide what an agent owns; worktrees stop two agents from t
 
 ## Cutting slices for this project
 
-Slice along the capability boundaries the specs already draw, in `openspec/changes/add-rag-chatbot-mvp/specs/`. Those seven capabilities are close to the natural slice lines, because each names behavior a visitor can observe rather than a layer of the stack.
+Slice along the capability boundaries the specs already draw, in `openspec/specs/` (the change itself is archived under `openspec/changes/archive/`). Those seven capabilities are close to the natural slice lines, because each names behavior a visitor can observe rather than a layer of the stack.
 
 Some rules that come out of the research and out of the advisor build:
 
