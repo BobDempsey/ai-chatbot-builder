@@ -191,13 +191,13 @@ The dark tokens were written from the start and never applied. `prefix(acb)` in 
 
 The app starts on the landing page at `/`. Below the chat box it now has "How it works" (four steps from `STEPS` in `apps/landing/src/app.tsx`), "What you get" with two screenshots, and the existing RAG paragraph and dashboard link. The screenshots live in `apps/landing/public/screens/` as WebP, one light and one dark of each (`dashboard-*.webp` at 1280 by 800, `widget-*.webp` at 384 by 747), and CSS shows the one matching the toggle through the new `acb:dark:` variant, which `styles.css` keys on `data-acb-theme` rather than the system. A landing test fails if a referenced image file is missing. The README task can reuse the same files.
 
-They were taken from the live site with Playwright at 1280 by 800. The widget shot needed the panel's fixed height lifted in the page (`[role=dialog]` height auto, its scroll area overflow visible) so the whole answer and both sources fit, and the dark and light widget shots are the same answer with the toggle clicked between them, so only one live question was spent. Retake them after any visible UI change.
+They were taken from the live site with Playwright at 1280 by 800. The widget shot needed the panel's fixed height lifted in the page (`[role=dialog]` height auto, its scroll area overflow visible) so the whole answer and both sources fit, and the dark and light widget shots are the same answer with the toggle clicked between them, so only one live question was spent. Retake them after any visible UI change. No WebP encoder is installed on this machine (no Pillow, `cwebp` or ImageMagick), so the 2026-09-29 retake saved PNGs with Playwright, drew them onto a canvas in the browser and wrote `canvas.toDataURL('image/webp', 0.85)` back to disk. That came out near 38KB per dashboard shot, against about 90KB for the originals.
 
 ### Navigation and the lightbox, 2026-09-29
 
 The owner asked for three changes. The landing page now opens with a `Site` nav bar: the product name on the left, and `Open the dashboard` (a link styled as an outline button) beside the theme toggle on the right; the old link at the foot of the page stays. Each screenshot is a button that opens the same themed image full size in `Lightbox`, a new centered Radix dialog in `packages/ui/src/lightbox.tsx`, closed by Escape, a click outside or its close button. The dashboard has the same `Site` bar on every state (loading, failed, loaded) with `Back to the home page` linking `/` and the toggle. In development that link goes nowhere, because the dashboard is its own server on 5181; in production both share an origin. Tests cover each change. Deployed in `d44f35b`; CI passed and the live dashboard bundle carries the back link.
 
-The landing's dashboard screenshots predate the back link, so retake them (see "Landing content and screenshots") before the README task reuses them. The widget's bubble sits above the lightbox overlay, since the widget host uses a very high z-index; it looks odd but blocks nothing.
+~~The landing's dashboard screenshots predate the back link, so retake them (see "Landing content and screenshots") before the README task reuses them.~~ **Retaken 2026-09-29** from the live dashboard at 1280 by 800, light and dark, now showing the back link. The widget shots were left alone, since the nav never touches the widget. The widget's bubble sits above the lightbox overlay, since the widget host uses a very high z-index; it looks odd but blocks nothing.
 
 ### Footer, RAG label and About, 2026-09-29
 
@@ -211,7 +211,13 @@ The README's "Deploying" section is stale: it still describes one assembled `dis
 
 ### Sticky navigation, 2026-09-29
 
-The `Site` bar stays in view on scroll. `SiteNav` and the dashboard's `TopBar` are `sticky top-0` with a `bg-surface` background and `z-30`, which keeps them above the page and below the lightbox overlay (`z-40`) and dialog (`z-50`). `SiteNav` also gained a bottom border and `py-3` in place of `pt-4`, so page content scrolls under a clean edge. Checked on the landing page in development: 800px down, the bar sat at the top of the viewport. The dashboard was not checked in a browser, since its loaded state needs the API. The retaken screenshots will show the bordered bar.
+The `Site` bar stays in view on scroll. `SiteNav` and the dashboard's `TopBar` are `sticky top-0` with a `bg-surface` background and `z-30`, which keeps them above the page and below the lightbox overlay (`z-40`) and dialog (`z-50`). `SiteNav` also gained a bottom border and `py-3` in place of `pt-4`, so page content scrolls under a clean edge. Checked on the landing page in development: 800px down, the bar sat at the top of the viewport. The dashboard was not checked in a browser, since its loaded state needs the API. The retaken dashboard screenshots show the dashboard's bar, which has no border; the landing page has no screenshot of itself.
+
+### The embed on another origin, 2026-09-29
+
+The one-line script tag had never been tried on a page outside this project's own origin, and it was broken there. `mountFromScriptTag` in `apps/widget/src/embed.ts` defaulted the API base to `''`, so on a third-party page `/api/bot` and `/api/chat` went to that page's own server (404 and 501) and every answer failed, although the file's header comment already promised the script's origin. `apiBaseFor` now defaults to the origin that served `embed.js`, with `data-acb-api` still overriding it, and `embed.test.ts` covers both cases. Fixed in `3429fe8`.
+
+Checked live after the deploy: a static page served on `localhost:5199` with the unmodified tag from the dashboard loaded the bubble, fetched the bot from the live API across origins, and answered "How do refunds work?" with two cited sections. CORS on both routes already worked; only the default was wrong. `embed.js` is served with `max-age=300`, so a browser that loaded the old file keeps it for up to five minutes after a deploy; the retest used a cache-busted `src`.
 
 ### Working with the owner
 
