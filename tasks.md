@@ -10,6 +10,7 @@
 - [x] Open landing screenshots full size on click
 - [x] Add a clear way back to the landing page from the dashboard
 - [ ] Set the Vercel project icon
+- [ ] Retake the landing screenshots with the new navigation
 - [ ] Add screenshots to the README
 - [ ] Add the portfolio entry
 - [ ] Add the resumeProjects entry
